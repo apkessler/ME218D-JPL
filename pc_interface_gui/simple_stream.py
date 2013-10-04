@@ -14,6 +14,7 @@ def main():
     pyplot.ylabel('Position')
 
     x = 0
+    
     while 1:
     
         y = np.sin(2.0*3.14159*x)
