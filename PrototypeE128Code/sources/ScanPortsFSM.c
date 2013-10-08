@@ -152,7 +152,7 @@ ES_Event RunScanPortsFSM( ES_Event ThisEvent )
               for (i = 0; i < sizeof(PortNumbers)/sizeof(PortNumbers[0]); i++)
               {
                   value = ADS12_ReadADPin(i);
-                  printf("%u,%u;", i, value);
+                  printf("%u,%u;\n", i, value);
               }
           }
           break;
