@@ -17,7 +17,8 @@ import time
 import os
 
 N = 8 #number of sensors
-    
+BAUD_RATE = 115200
+
 #Limits on sensor readings
 Y_max = 1024
 Y_min = 0
@@ -76,9 +77,9 @@ def setupSerial():
     ii = 0
     availablePorts = list_serial_ports()
     numSerialPorts = len(availablePorts)
-    
-    for port in list_ports.comports():
-        print "[%01d] %s" % (ii, port[0])
+    print availablePorts
+    for port in availablePorts:
+        print "[%01d] %s" % (ii, port)
         ii = ii + 1
     
 
@@ -95,7 +96,7 @@ def setupSerial():
     portName = availablePorts[ser_index]
     print "Attempting to open %s..." % portName
     try:
-        ser = serial.Serial(portName, 115200, timeout=0) #open the selected serial port
+        ser = serial.Serial(portName,  baudrate=BAUD_RATE, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=0, rtscts=0)
     except SerialExcepton as err:
         print "Error opening serial port: %s" % err
         return None
