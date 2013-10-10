@@ -14,11 +14,12 @@ import numpy as np
 import matplotlib.pyplot as pyplot
 
 import time
+import os
 
-N = 10 #number of sensors
+N = 8 #number of sensors
     
 #Limits on sensor readings
-Y_max = 255
+Y_max = 1024
 Y_min = 0
     
 
@@ -73,7 +74,9 @@ def setupSerial():
     print "Available COM ports:"
    
     ii = 0
-    numSerialPorts = len(list_ports.comports())
+    availablePorts = list_serial_ports()
+    numSerialPorts = len(availablePorts)
+    
     for port in list_ports.comports():
         print "[%01d] %s" % (ii, port[0])
         ii = ii + 1
@@ -89,7 +92,7 @@ def setupSerial():
         print "Bad input."
         return None
         
-    portName = list_ports.comports()[ser_index][0]
+    portName = availablePorts[ser_index]
     print "Attempting to open %s..." % portName
     try:
         ser = serial.Serial(portName, 115200, timeout=0) #open the selected serial port
@@ -97,7 +100,7 @@ def setupSerial():
         print "Error opening serial port: %s" % err
         return None
     
-    print "Sucessfully opened the serial port!"
+    print "Successfully opened the serial port!"
 
     return ser
     
@@ -111,7 +114,22 @@ def drawBarGraph(x,y):
     pyplot.hold(False)
     pyplot.draw()
 
-
+def list_serial_ports():
+    # Windows
+    if os.name == 'nt':
+        # Scan for available ports.
+        available = []
+        for i in range(256):
+            try:
+                s = serial.Serial(i)
+                available.append('COM'+str(i + 1))
+                s.close()
+            except serial.SerialException:
+                pass
+        return available
+    else:
+        # Mac / Linux
+        return [port[0] for port in list_ports.comports()]
 
 
 
