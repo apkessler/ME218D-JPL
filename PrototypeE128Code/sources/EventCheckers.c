@@ -13,11 +13,15 @@
 
 boolean Check4Lock(void)
 {
+  /*
   ES_Event event;
   
   PostScanPortsFSM(event);
   
   return True;
+  */
+  
+  return False;
 }
 
 boolean Check4Unlock(void)

@@ -138,6 +138,8 @@ ES_Event RunScanPortsFSM( ES_Event ThisEvent )
               // this is where you would put any actions associated with the
               // transition from the initial pseudo-state into the actual
               // initial state
+              
+              ES_Timer_InitTimer(SERIAL_TIMER, 10);
 
               // now put the machine into the actual initial state
               CurrentState = Scanning;
@@ -148,11 +150,16 @@ ES_Event RunScanPortsFSM( ES_Event ThisEvent )
           {
               unsigned int i = 0;
               unsigned short value = 0;
-
-              for (i = 0; i < sizeof(PortNumbers)/sizeof(PortNumbers[0]); i++)
-              {
-                  value = ADS12_ReadADPin(i);
-                  printf("%u,%u;\n", i, value);
+              
+              if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == SERIAL_TIMER) {
+                ES_Timer_InitTimer(SERIAL_TIMER, 10);                
+  
+                for (i = 0; i < sizeof(PortNumbers)/sizeof(PortNumbers[0]); i++)
+                {
+                    value = ADS12_ReadADPin(i);
+                    printf("%04u ", value);
+                }
+                printf("\r\n");
               }
           }
           break;

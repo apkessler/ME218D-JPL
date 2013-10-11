@@ -195,7 +195,7 @@ typedef enum {  ES_NO_EVENT = 0,
 // correspnding timer expires. All 8 must be defined. If you are not using
 // a timers, then you can use TIMER_UNUSED
 #define TIMER_UNUSED ((pPostFunc)0)
-#define TIMER0_RESP_FUNC TIMER_UNUSED
+#define TIMER0_RESP_FUNC PostScanPortsFSM
 #define TIMER1_RESP_FUNC TIMER_UNUSED
 #define TIMER2_RESP_FUNC TIMER_UNUSED
 #define TIMER3_RESP_FUNC TIMER_UNUSED
@@ -209,5 +209,7 @@ typedef enum {  ES_NO_EVENT = 0,
 // to different timers if the need arises. Keep these definitons close to the
 // definitions for the response functions to make it easier to check that
 // the timer number matches where the timer event will be routed
+
+#define SERIAL_TIMER 0
 
 #endif /* CONFIGURE_H */

@@ -24,7 +24,7 @@
 #include <hidef.h>         /* common defines and macros */
 #include <mc9s12e128.h>     /* derivative information */
 #include <S12e128bits.h>    /* bit definitions  */
-#include <ads12.h>
+#include "ads12.h"
 #include <string.h>
 
 /*----------------------------- Module Defines ----------------------------*/
