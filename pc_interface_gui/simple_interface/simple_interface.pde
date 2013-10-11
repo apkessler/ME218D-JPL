@@ -5,42 +5,45 @@ import controlP5.*;
 PFont gillsf;
 PFont monof;
 
-//Constants
-
+/*********************CONSTANTS*****************************************/
 final int NUM_SENSORS = 8;
+final int SENSOR_MAX = 1024;
 final int X_BASE = 50;
 final int Y_BASE = 100;
 final int X_SPACING = 100;
 final int Y_SPACING = 0;
+
+//Lists...
 final String[] BAUD_LIST = {"2400", "4800", "9600", "19200", "38400","57600", "115200"};
 final String[] DATA_BITS_LIST = {"6","7","8"};
 final String[] PARITY_LIST = {"none", "even", "odd"};
 final String[] STOP_LIST = {"1", "1.5", "2"};
+
 final int Y_SERIAL = 500;
 final int X_SERIAL = 70;
 final int BUTTON_HEIGHT = 30;
 
+//Colors...
 final color DISCONNECTED_COLOR = color(40,200,6);
 final color CONNECTED_COLOR = color(255,0,0);
-  
-//Set up the array of sensor plots
-BarPlot[] sensorPlots = new BarPlot[NUM_SENSORS];
+ 
+/****************************GLOBALS**********************************/  
+BarPlot[] sensorPlots = new BarPlot[NUM_SENSORS]; //sensor plots
 
-//The file of sample data to display.
-String[] file; 
-
-//The global counter.
+String[] file; //file of sample data to display 
 int dataIndex = 0;
 
+//Serial Port variables
 Serial thePort;
 boolean portOpen = false;
 
-//Setup all the ControlP5 stuff...
+//ControlP5 vars...
 ControlP5 controlP5;
 DropdownList ddl_ports, ddl_baud, ddl_dbits, ddl_parity, ddl_stop;
 Button but1;
 CheckBox checkbox;
 
+/************************FUNCTIONS************************************/
 /*
  * The setup() functions get everything ready to go - executed
  * once before draw() is ever called.
@@ -145,8 +148,8 @@ void draw()
   
 
   //Get the next entry from the data file...
-  float thisLevel = float(file[dataIndex]);
-  
+ // float thisLevel = float(file[dataIndex]);
+  /*
   if(thisLevel >= 0)
   {
     for (int i = 0; i < NUM_SENSORS; i++)
@@ -158,7 +161,7 @@ void draw()
   {
     dataIndex = 0;
   }
-  
+  */
  
  drawMouseCrosshair(); 
   
@@ -200,11 +203,23 @@ public void connect(float theValue)
 
    
    thePort = new Serial(this, portName, baudVal);
+   thePort.bufferUntil('\n'); //trigger a SerialEvent every time a new line gets fed in
    portOpen = true;
 
    
   
 }
+
+void serialEvent(Serial _port) 
+{ 
+  String line = _port.readString();
+  int[] nums = int(split(line, ' '));
+
+  System.out.printf("[%d,%d,%d,%d,%d,%d,%d,%d]\n", nums[0], nums[1],nums[2],nums[3],nums[4],nums[5],nums[6],nums[7]);
+  for (int i = 0; i < NUM_SENSORS; i++)
+  {sensorPlots[i].setLevel(float(nums[i])/float(SENSOR_MAX));}
+  
+} 
 
 void drawMouseCrosshair()
 {
