@@ -13,7 +13,13 @@ final int Y_BASE = 100;
 final int X_SPACING = 100;
 final int Y_SPACING = 0;
 final String[] BAUD_LIST = {"2400", "4800", "9600", "19200", "38400","57600", "115200"};
-
+final String[] DATA_BITS_LIST = {"6","7","8"};
+final String[] PARITY_LIST = {"none", "even", "odd"};
+final String[] STOP_LIST = {"1", "1.5", "2"};
+final int Y_SERIAL = 500;
+final int X_SERIAL = 70;
+final int BUTTON_HEIGHT = 30;
+  
 //Set up the array of sensor plots
 BarPlot[] sensorPlots = new BarPlot[NUM_SENSORS];
 
@@ -26,8 +32,9 @@ int dataIndex = 0;
 
 //Setup all the ControlP5 stuff...
 ControlP5 controlP5;
-DropdownList ddl_ports, ddl_baud;
+DropdownList ddl_ports, ddl_baud, ddl_dbits, ddl_parity, ddl_stop;
 Button but1;
+CheckBox checkbox;
 
 /*
  * The setup() functions get everything ready to go - executed
@@ -59,14 +66,30 @@ void setup()
   
   //ControlP5 setup
   controlP5 = new ControlP5(this);
-  ddl_ports = controlP5.addDropdownList("Serial port", 90, 500, 200, 300);
+
+  ddl_ports = controlP5.addDropdownList("Serial port", 90, Y_SERIAL, 200, 300);
   customizeDropdownList(ddl_ports, Serial.list());
 
-  ddl_baud = controlP5.addDropdownList("Baud rate", 320, 500, 70, 300);
+  ddl_baud = controlP5.addDropdownList("Baud rate", 300, Y_SERIAL, 70, 300);
   customizeDropdownList(ddl_baud, BAUD_LIST);
   
-  but1 = controlP5.addButton("connect", 0, 690, 475, 50, 30);
+  ddl_dbits = controlP5.addDropdownList("Data bits", 380, Y_SERIAL, 70, 300);
+  customizeDropdownList(ddl_dbits, DATA_BITS_LIST);
   
+  ddl_parity = controlP5.addDropdownList("Parity", 460, Y_SERIAL, 70, 300);
+  customizeDropdownList(ddl_parity, PARITY_LIST);
+  
+  ddl_stop = controlP5.addDropdownList("Stop Bits", 540, Y_SERIAL, 70, 300);
+  customizeDropdownList(ddl_stop, STOP_LIST);
+  
+  but1 = controlP5.addButton("connect", 0, 680, Y_SERIAL - BUTTON_HEIGHT + 5, 60, BUTTON_HEIGHT);
+  but1.setColorBackground(color(255,0,0));
+  
+  checkbox = controlP5.addCheckBox("Flow control", 620, Y_SERIAL - 27);
+  checkbox.addItem("CTR",0);
+  checkbox.addItem("DTR", 0);
+  checkbox.addItem("XON", 0);
+  checkbox.setItemsPerRow(1);
 }
 
 /*
@@ -78,13 +101,20 @@ void draw()
  
  //Draw the title text...
   fill(0);
-  textSize(30);
-  text("Wheel Sensors",20,50);
+  textSize(15);
+  textAlign(LEFT, CENTER);
+  text("Force sensors...",30,50);
+  
+  textSize(15);
+  textAlign(LEFT, CENTER);
+  text("Serial settings...", X_SERIAL, Y_SERIAL - 50);
   
   //Draw the box around the serial stuff
+  
   fill(0,0,0,30);
   stroke(0);
-  rect(70, 465, 680, 50); 
+  rect(X_SERIAL, 465, 680, 50); 
+  
   
   //Draw the box around the graphs
   fill(0,0,0,30);
@@ -122,7 +152,7 @@ void customizeDropdownList(DropdownList ddl, String[] optList)
 {
   //ddl.setBackgroundColor(color(190));
   ddl.setItemHeight(20);
-  ddl.setBarHeight(15);
+  ddl.setBarHeight(20);
   //ddl.captionLabel().set("pulldown");
   ddl.captionLabel().style().marginTop = 3;
   ddl.captionLabel().style().marginLeft = 3;
