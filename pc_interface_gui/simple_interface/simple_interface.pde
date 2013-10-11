@@ -191,6 +191,9 @@ String ddlGetSelected(DropdownList ddl)
  return ddl.getItem(int(ddl.getValue())).getName();
 }
 
+/*
+ * Callback for "Connect" button. 
+ */ 
 public void connect(float theValue)
 {
    println("Connect pushed."); 
@@ -210,6 +213,9 @@ public void connect(float theValue)
   
 }
 
+/*
+ * Function called whenever a newline is available on the serial port.
+ */
 void serialEvent(Serial _port) 
 { 
   String line = _port.readString();
@@ -221,6 +227,9 @@ void serialEvent(Serial _port)
   
 } 
 
+/*
+ * Draw a nice little crosshair over the pointer with coords so you can see where you are.
+ */
 void drawMouseCrosshair()
 {
  
