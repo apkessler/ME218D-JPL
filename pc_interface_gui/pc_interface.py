@@ -45,9 +45,8 @@ def main():
  
     while 1:
 
-        line = serialPort.readline() #read until we get a newline
+        line = serialPort.readline() #read until we get a newline,
         if (line):
-            #print line #print the line we got
             tokens = line.split(';')[0].split(',')
             try:
                 assert(len(tokens) == 2)
@@ -58,16 +57,13 @@ def main():
                 assert(sensorIndex > 0 and sensorIndex < N)
                 
             except ValueError:
-                print "Bad serial input (%s)!" % line
-                pass
+                print "Bad serial input (%s)!" % line   
             except AssertionError:
-                print "Bad serial input (%s)!" % line
-                pass
+                print "Bad serial input (%s)!" % line               
             else:
-			    y[sensorIndex] = sensorRead
-            
-			    #Draw the latest plot
-			    drawBarGraph(x,y)
+                y[sensorIndex] = sensorRead
+                drawBarGraph(x,y) #redraw 
+
         
 
 def setupSerial():
@@ -77,7 +73,7 @@ def setupSerial():
     ii = 0
     availablePorts = list_serial_ports()
     numSerialPorts = len(availablePorts)
-    print availablePorts
+    
     for port in availablePorts:
         print "[%01d] %s" % (ii, port)
         ii = ii + 1
