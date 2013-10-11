@@ -6,7 +6,7 @@ PFont gillsf;
 PFont monof;
 
 //Constants
-/**/
+
 final int NUM_SENSORS = 8;
 final int X_BASE = 50;
 final int Y_BASE = 100;
@@ -113,7 +113,7 @@ void draw()
   }
   
  
-  
+ drawMouseCrosshair(); 
   
 }
 
@@ -139,5 +139,16 @@ void customizeDropdownList(DropdownList ddl, String[] optList)
 public void connect(float theValue)
 {
    println("Connect pushed."); 
+  
+}
+
+void drawMouseCrosshair()
+{
+ 
+  fill(0);
+  textSize(10);
+  text("(" + mouseX +"," + mouseY +")",mouseX+2,mouseY); 
+  line(mouseX, mouseY - 5, mouseX, mouseY + 5);
+  line(mouseX- 5, mouseY, mouseX+5, mouseY);
   
 }
