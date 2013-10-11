@@ -19,6 +19,9 @@ final String[] STOP_LIST = {"1", "1.5", "2"};
 final int Y_SERIAL = 500;
 final int X_SERIAL = 70;
 final int BUTTON_HEIGHT = 30;
+
+final color DISCONNECTED_COLOR = color(40,200,6);
+final color CONNECTED_COLOR = color(255,0,0);
   
 //Set up the array of sensor plots
 BarPlot[] sensorPlots = new BarPlot[NUM_SENSORS];
@@ -29,6 +32,8 @@ String[] file;
 //The global counter.
 int dataIndex = 0;
 
+Serial thePort;
+boolean portOpen = false;
 
 //Setup all the ControlP5 stuff...
 ControlP5 controlP5;
@@ -109,6 +114,17 @@ void draw()
   textAlign(LEFT, CENTER);
   text("Serial settings...", X_SERIAL, Y_SERIAL - 50);
   
+  if (portOpen)
+  {
+    text("Connected!", X_SERIAL + 200, Y_SERIAL - 50);
+    but1.setColorBackground(CONNECTED_COLOR);
+  }
+  else
+  {
+   text("Not connected.", X_SERIAL + 200, Y_SERIAL - 50); 
+   but1.setColorBackground(DISCONNECTED_COLOR);
+  }
+  
   //Draw the box around the serial stuff
   
   fill(0,0,0,30);
@@ -126,6 +142,7 @@ void draw()
   {sensorPlots[i].draw();}
   
    
+  
 
   //Get the next entry from the data file...
   float thisLevel = float(file[dataIndex]);
@@ -166,9 +183,26 @@ void customizeDropdownList(DropdownList ddl, String[] optList)
   //ddl.setColorActive(color(255,128));
 }
 
+String ddlGetSelected(DropdownList ddl)
+{
+ return ddl.getItem(int(ddl.getValue())).getName();
+}
+
 public void connect(float theValue)
 {
    println("Connect pushed."); 
+
+
+  String portName = ddlGetSelected(ddl_ports);
+  int baudVal = Integer.parseInt(ddlGetSelected(ddl_baud));
+   println("Port: " + portName);
+   println("Baud: " + baudVal);
+
+   
+   thePort = new Serial(this, portName, baudVal);
+   portOpen = true;
+
+   
   
 }
 
