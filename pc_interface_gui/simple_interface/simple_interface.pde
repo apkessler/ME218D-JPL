@@ -107,7 +107,6 @@ void setup()
 void draw() 
 {
   background(BG_COLOR);
- 
    
   drawBarGraphs(); 
   drawSerialSettings(); 
@@ -164,6 +163,7 @@ public void connect(float theValue)
   else
   {
     portOpen = false;
+    println("Closing serial port...");
     thePort.stop(); 
   }
    
@@ -259,4 +259,25 @@ void drawBarGraphs()
   //This box fades away once serial port is opened, needs to be called last to be in front
   drawCoverBox();
  
+}
+
+
+void keyPressed() 
+{
+  int keyIndex = -1;
+  char c = key;
+  
+  switch (c)
+  {
+   case 'q':
+    if (portOpen)
+    {
+      println("Closing serial port...");
+      thePort.stop();
+    }
+    exit();
+   default:
+    println("No action defined for '" + c + "'.");
+  }
+   
 }
