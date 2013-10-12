@@ -5,7 +5,7 @@ import controlP5.*;
 PFont gillsf;
 PFont monof;
 
-/*********************CONSTANTS*****************************************/
+/**************************************CONSTANTS*****************************************/
 final int NUM_SENSORS = 8;
 final int SENSOR_MAX = 1024;
 final int X_BASE = 50;
@@ -27,11 +27,9 @@ final int BUTTON_HEIGHT = 30;
 final color DISCONNECTED_COLOR = color(40,200,6);
 final color CONNECTED_COLOR = color(255,0,0);
  
-/****************************GLOBALS**********************************/  
+/***************************************GLOBALS******************************************/  
 BarPlot[] sensorPlots = new BarPlot[NUM_SENSORS]; //sensor plots
 
-String[] file; //file of sample data to display 
-int dataIndex = 0;
 
 //Serial Port variables
 Serial thePort;
@@ -43,7 +41,7 @@ DropdownList ddl_ports, ddl_baud, ddl_dbits, ddl_parity, ddl_stop;
 Button but1;
 CheckBox checkbox;
 
-/************************FUNCTIONS************************************/
+/****************************************FUNCTIONS***************************************/
 /*
  * The setup() functions get everything ready to go - executed
  * once before draw() is ever called.
@@ -57,8 +55,6 @@ void setup()
   fill(255);
   background(11, 95, 165);
 
-  file = loadStrings("test.txt");
-  
   String name_str;
   int x_coord;
   int y_coord;
@@ -70,6 +66,7 @@ void setup()
      x_coord = X_BASE + ii*X_SPACING;
      y_coord = Y_BASE + ii*Y_SPACING;
      sensorPlots[ii] = new BarPlot(name_str, x_coord, y_coord); 
+     sensorPlots[ii].setBackgroundColor(color(200,200,200));
   }
   
   //ControlP5 setup
@@ -144,24 +141,6 @@ void draw()
   for (int i = 0; i < NUM_SENSORS; i++)
   {sensorPlots[i].draw();}
   
-   
-  
-
-  //Get the next entry from the data file...
- // float thisLevel = float(file[dataIndex]);
-  /*
-  if(thisLevel >= 0)
-  {
-    for (int i = 0; i < NUM_SENSORS; i++)
-      {sensorPlots[i].setLevel(thisLevel);}
-    
-    dataIndex++;
-  }
-  else
-  {
-    dataIndex = 0;
-  }
-  */
  
  drawMouseCrosshair(); 
   

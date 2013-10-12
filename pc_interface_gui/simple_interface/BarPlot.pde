@@ -54,7 +54,15 @@ class BarPlot {
   }
   
   
+  void setBackgroundColor(color c)
+  {
+   bg_color = c; 
+  }
   
+  void setForegroundColor(color c)
+  {
+   active_color = c; 
+  }
   
   
 }
