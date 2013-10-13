@@ -8,8 +8,8 @@ PFont monof;
 /**************************************CONSTANTS*****************************************/
 final int NUM_SENSORS = 8;
 final int SENSOR_MAX = 1024;
-final int X_BASE = 50;
-final int Y_BASE = 500;
+final int X_BASE = 40;
+final int Y_BASE = 140;
 final int X_SPACING = 100;
 final int Y_SPACING = 0;
 
@@ -20,7 +20,7 @@ final String[] PARITY_LIST = {"none", "even", "odd"};
 final String[] STOP_LIST = {"1", "1.5", "2"};
 
 final int Y_SERIAL = 70;
-final int X_SERIAL = 30;
+final int X_SERIAL = 60;
 final int BUTTON_HEIGHT = 30;
 
 //Colors...
@@ -52,7 +52,7 @@ CheckBox checkbox;
  */
 void setup()
 {
-  size(1000, 800); // size(x,y) of the window in pixels, stored automatically in the parameters width and height
+  size(850, 400); // size(x,y) of the window in pixels, stored automatically in the parameters width and height
   frameRate(30); // call the draw() function at 30 frames per second to update the window
   smooth();
 
@@ -111,7 +111,7 @@ void draw()
   drawBarGraphs(); 
   drawSerialSettings(); 
  
- //drawMouseCrosshair(); 
+ drawMouseCrosshair(); 
   
 }
 
@@ -276,6 +276,7 @@ void keyPressed()
       thePort.stop();
     }
     exit();
+    break;
    default:
     println("No action defined for '" + c + "'.");
   }
