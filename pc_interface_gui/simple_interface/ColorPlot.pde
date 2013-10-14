@@ -33,7 +33,6 @@ class ColorPlot {
   {   
    rectMode(CORNER);
    int cInd = floor(min(level*colorMap.length, 1023));
-   println(cInd);
    fill(colorMap[cInd]);
    stroke(strokeColor);
    rect(xPos,yPos,wBox,hBox); 

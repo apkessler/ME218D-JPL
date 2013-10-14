@@ -342,6 +342,5 @@ void loadColorMap()
    {
       String[] rgb = split(lines[i],' ');
       colorMap[i] = color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
-      println(rgb);
     } 
 }
