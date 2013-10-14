@@ -12,7 +12,7 @@ The advancement of wheeled mobility systems for planetary exploration faces two 
 
 ## Repository Structure
 ###PC Interface GUI
-Files in this folder are the PC end of the pressure sensor interface. The microcontroller will send data over a data channel (for now, UART), and the PC interface will interpret and plot this data in real time. The GUI is written in the Processing language, available for free at [http://processing.org](http://processing.org/ "Processing").
+Files in this folder are the PC end of the pressure sensor interface. The microcontroller will send data over a data channel (for now, UART), and the PC interface will interpret and plot this data in real time. The GUI is written in the Processing language, available for free at [http://processing.org](http://processing.org/ "Processing"). To run the GUI from source, you will also need the ControlP5 library, available [here](http://www.sojamo.de/libraries/controlP5/).
 
 ###Microcontroller Code
 
