@@ -30,6 +30,10 @@ final color BG_COLOR = color(20,20,20);
 final color BOX_BG_COLOR = color(11,95,165);
 final color FONT_COLOR = color(255);
  
+ 
+//Heat map...
+color[] colorMap = new color[1024];
+
 /***************************************GLOBALS******************************************/  
 BarPlot[] sensorPlots = new BarPlot[NUM_SENSORS]; //sensor plots
 
@@ -52,7 +56,7 @@ CheckBox checkbox;
  */
 void setup()
 {
-  size(850, 400); // size(x,y) of the window in pixels, stored automatically in the parameters width and height
+  size(850, 900); // size(x,y) of the window in pixels, stored automatically in the parameters width and height
   frameRate(30); // call the draw() function at 30 frames per second to update the window
   smooth();
 
@@ -99,6 +103,9 @@ void setup()
   checkbox.addItem("DTR", 0);
   checkbox.addItem("XON", 0);
   checkbox.setItemsPerRow(1);
+  
+  loadColorMap();
+  
 }
 
 /*
@@ -111,7 +118,9 @@ void draw()
   drawBarGraphs(); 
   drawSerialSettings(); 
  
+ drawMapLegend();
  drawMouseCrosshair(); 
+ 
   
 }
 
@@ -281,4 +290,47 @@ void keyPressed()
     println("No action defined for '" + c + "'.");
   }
    
+}
+
+
+
+void drawMapLegend()
+{
+    int LEG_X = 10;
+    int LEG_Y = 400;
+    int LEG_WIDTH = 100;
+    int NUM_COLORS = 1024;
+    int COLOR_HEIGHT = 1;
+    int NUM_LEG_COLORS = 200;
+    
+    noStroke();    
+    //int colorIndex = int(map(mouseX, 0, 850, 0, 1023));
+    fill(0,0,255);
+    rect(LEG_X -1, LEG_Y - 1, LEG_WIDTH + 2, NUM_LEG_COLORS*COLOR_HEIGHT + 3);
+  
+    
+    int ii;
+    int cInd;
+    for (ii = 0; ii < NUM_LEG_COLORS; ii++)
+    {
+        cInd = int(map(ii, 0, NUM_LEG_COLORS, 0, NUM_COLORS)); 
+        fill(colorMap[cInd]);
+        noStroke();
+        rect(LEG_X, LEG_Y + (NUM_LEG_COLORS - ii)*COLOR_HEIGHT, LEG_WIDTH, COLOR_HEIGHT);
+    }
+    
+}
+
+/* 
+ * Load the color map from the text file.
+ */
+void loadColorMap()
+{
+   String lines[] = loadStrings("colors.txt");
+   for (int i=0; i < lines.length; i++)
+   {
+      String[] rgb = split(lines[i],' ');
+      colorMap[i] = color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+      println(rgb);
+    } 
 }
