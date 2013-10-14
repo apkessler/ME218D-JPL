@@ -205,9 +205,9 @@ void serialEvent(Serial _port)
     int[] nums = int(split(line, ' '));
     System.out.printf("[%d,%d,%d,%d,%d,%d,%d,%d]\n", nums[0], nums[1],nums[2],nums[3],nums[4],nums[5],nums[6],nums[7]);
     for (int i = 0; i < NUM_SENSORS; i++)
-    {sensorPlots[i].setLevel(float(nums[i])/float(SENSOR_MAX));}
+    {sensorPlots[i].setLevel(1.0 - float(nums[i])/float(SENSOR_MAX));}
   }
-  catch (java.lang.reflect.InvocationTargetException e){
+  catch (Exception e){
     println("Unknown serial error."); 
   }
   
