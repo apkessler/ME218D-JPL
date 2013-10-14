@@ -6,9 +6,13 @@ PFont gillsf;
 PFont monof;
 
 /**************************************CONSTANTS*****************************************/
+final int WINDOW_W = 1000;
+final int WINDOW_H = 415;
+
+
 final int NUM_SENSORS = 8;
 final int SENSOR_MAX = 1024;
-final int X_BASE = 40;
+final int X_BASE = 80;
 final int Y_BASE = 140;
 final int X_SPACING = 100;
 final int Y_SPACING = 0;
@@ -30,9 +34,13 @@ final color BG_COLOR = color(20,20,20);
 final color BOX_BG_COLOR = color(11,95,165);
 final color FONT_COLOR = color(255);
  
+ 
+//Heat map...
+final int NUM_COLORS = 1024;
+color[] colorMap = new color[NUM_COLORS];
 /***************************************GLOBALS******************************************/  
-BarPlot[] sensorPlots = new BarPlot[NUM_SENSORS]; //sensor plots
 
+ColorPlot[] sensorPlots = new ColorPlot[NUM_SENSORS]; //sensor plots
 
 //Serial Port variables
 Serial thePort;
@@ -52,7 +60,7 @@ CheckBox checkbox;
  */
 void setup()
 {
-  size(850, 400); // size(x,y) of the window in pixels, stored automatically in the parameters width and height
+  size(WINDOW_W, WINDOW_H); // size(x,y) of the window in pixels, stored automatically in the parameters width and height
   frameRate(30); // call the draw() function at 30 frames per second to update the window
   smooth();
 
@@ -69,8 +77,7 @@ void setup()
      name_str = "S" + ii; 
      x_coord = X_BASE + ii*X_SPACING;
      y_coord = Y_BASE + ii*Y_SPACING;
-     sensorPlots[ii] = new BarPlot(name_str, x_coord, y_coord); 
-     sensorPlots[ii].setBackgroundColor(color(200,200,200));
+     sensorPlots[ii] = new ColorPlot(name_str, x_coord, y_coord, colorMap); 
   }
   
   //ControlP5 setup
@@ -99,6 +106,10 @@ void setup()
   checkbox.addItem("DTR", 0);
   checkbox.addItem("XON", 0);
   checkbox.setItemsPerRow(1);
+  
+  loadColorMap();
+  //cPlot = new ColorPlot("Plot 1", 200,400, colorMap);
+ 
 }
 
 /*
@@ -108,10 +119,20 @@ void draw()
 {
   background(BG_COLOR);
    
-  drawBarGraphs(); 
+ 
   drawSerialSettings(); 
  
+ drawMapLegend();
  drawMouseCrosshair(); 
+ 
+ 
+ /*
+ for (int i = 0; i < NUM_SENSORS; i++)
+ {
+   sensorPlots[i].setLevel(float(mouseX)/850.0);
+ }
+ */  
+  drawColorPlots();
   
 }
 
@@ -239,7 +260,8 @@ void drawSerialSettings()
   } 
 }
 
-void drawBarGraphs()
+
+void drawColorPlots()
 {
   //Draw the framing box
   fill(BOX_BG_COLOR);
@@ -257,7 +279,7 @@ void drawBarGraphs()
   text("Force sensors...",X_BASE,Y_BASE - 20);
   
   //This box fades away once serial port is opened, needs to be called last to be in front
-  drawCoverBox();
+  //drawCoverBox();
  
 }
 
@@ -281,4 +303,44 @@ void keyPressed()
     println("No action defined for '" + c + "'.");
   }
    
+}
+
+
+
+void drawMapLegend()
+{
+    int LEG_X = 10;
+    int LEG_Y = 100;
+    int LEG_WIDTH = 50;
+    int COLOR_HEIGHT = 1;
+    int NUM_LEG_COLORS = 300;
+    
+    noStroke();    
+    fill(255);
+    rect(LEG_X -1, LEG_Y - 1, LEG_WIDTH + 2, NUM_LEG_COLORS*COLOR_HEIGHT + 3);
+  
+    
+    int ii;
+    int cInd;
+    for (ii = 0; ii < NUM_LEG_COLORS; ii++)
+    {
+        cInd = int(map(ii, 0, NUM_LEG_COLORS, 0, NUM_COLORS)); 
+        fill(colorMap[cInd]);
+        noStroke();
+        rect(LEG_X, LEG_Y + (NUM_LEG_COLORS - ii)*COLOR_HEIGHT, LEG_WIDTH, COLOR_HEIGHT);
+    }
+    
+}
+
+/* 
+ * Load the color map from the text file.
+ */
+void loadColorMap()
+{
+   String lines[] = loadStrings("jet.txt");
+   for (int i=0; i < lines.length; i++)
+   {
+      String[] rgb = split(lines[i],' ');
+      colorMap[i] = color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+    } 
 }
