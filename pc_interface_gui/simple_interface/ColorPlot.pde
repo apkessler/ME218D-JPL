@@ -18,12 +18,14 @@ class ColorPlot {
    color colorMap[];
    
    
-   ColorPlot(String _label,int _x, int _y, color[] _map)
+   ColorPlot(String _label,int _x, int _y, int _w, int _h, color[] _map)
    {
       xPos = _x;
       yPos = _y;
+      wBox = _w;
+      hBox = _h;
       label = _label;
-      level = .2;
+      level = 0.0;
       showLabel = true;
       
       colorMap = _map;

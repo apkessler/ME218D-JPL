@@ -6,16 +6,22 @@ PFont gillsf;
 PFont monof;
 
 /**************************************CONSTANTS*****************************************/
-final int WINDOW_W = 1000;
+final int WINDOW_W = 850;
 final int WINDOW_H = 415;
 
 
 final int NUM_SENSORS = 8;
 final int SENSOR_MAX = 1024;
-final int X_BASE = 80;
+final int X_BASE = 130;
 final int Y_BASE = 140;
-final int X_SPACING = 100;
-final int Y_SPACING = 0;
+final int X_SPACING = 50;
+final int Y_SPACING = 50;
+final int NUM_COLS = 4;
+final int NUM_ROWS = ceil(float(NUM_SENSORS)/float(NUM_COLS));
+final int W_BOX = 50;
+final int H_BOX = 50;
+final int X_BOX_BASE = X_BASE + 2*X_SPACING + W_BOX;
+final int Y_BOX_BASE = Y_BASE + Y_SPACING;
 
 //Lists...
 final String[] BAUD_LIST = {"2400", "4800", "9600", "19200", "38400","57600", "115200"};
@@ -70,14 +76,16 @@ void setup()
   String name_str;
   int x_coord;
   int y_coord;
-  
   //Set up the positions of the bar graphs.
+  
   for (int ii = 0; ii < NUM_SENSORS; ii++)
   {
      name_str = "S" + ii; 
-     x_coord = X_BASE + ii*X_SPACING;
-     y_coord = Y_BASE + ii*Y_SPACING;
-     sensorPlots[ii] = new ColorPlot(name_str, x_coord, y_coord, colorMap); 
+     x_coord = (ii%NUM_COLS)*(W_BOX + X_SPACING) + X_BOX_BASE;
+     //x_coord = X_BASE + ii*X_SPACING;
+     y_coord = (ii/NUM_COLS)*(H_BOX + Y_SPACING) + Y_BOX_BASE;
+     //y_coord = Y_BASE + ii*Y_SPACING;
+     sensorPlots[ii] = new ColorPlot(name_str, x_coord, y_coord, W_BOX, H_BOX, colorMap); 
   }
   
   //ControlP5 setup
@@ -122,16 +130,15 @@ void draw()
  
   drawSerialSettings(); 
  
- drawMapLegend();
  drawMouseCrosshair(); 
  
  
- /*
+ 
  for (int i = 0; i < NUM_SENSORS; i++)
  {
-   sensorPlots[i].setLevel(float(mouseX)/850.0);
+   sensorPlots[i].setLevel(float(mouseX)/width);
  }
- */  
+  
   drawColorPlots();
   
 }
@@ -266,7 +273,9 @@ void drawColorPlots()
   //Draw the framing box
   fill(BOX_BG_COLOR);
   stroke(255);
-  rect(X_BASE - 10, Y_BASE - 30, 800, 260); 
+  int frame_w = NUM_COLS * (W_BOX + X_SPACING) + 2*X_SPACING + W_BOX;
+  int frame_h = NUM_ROWS * (H_BOX + Y_SPACING) + Y_SPACING;
+  rect(X_BASE, Y_BASE, frame_w, frame_h); 
   
   //Draw all the bar graphs...
   for (int i = 0; i < NUM_SENSORS; i++)
@@ -274,9 +283,40 @@ void drawColorPlots()
   
   //Draw the graph text...
   fill(FONT_COLOR);
-  textSize(15);
-  textAlign(LEFT, CENTER);
-  text("Force sensors...",X_BASE,Y_BASE - 20);
+  textSize(20);
+  textAlign(CENTER, CENTER);
+  text("Force Sensors",X_BASE + frame_w/2,Y_BASE + Y_SPACING/3);
+  
+
+  
+  //drawMapLegend()
+  int LEG_X = X_BASE + X_SPACING;
+  int LEG_Y = Y_BASE + Y_SPACING;
+  int LEG_WIDTH = W_BOX;
+  int COLOR_HEIGHT = 1;
+  int LEG_HEIGHT = NUM_ROWS*H_BOX + (NUM_ROWS - 1)*Y_SPACING;
+  int NUM_LEG_COLORS = min(LEG_HEIGHT/COLOR_HEIGHT,1024);
+   
+   noStroke();    
+   fill(255);
+   rect(LEG_X -1, LEG_Y - 1, LEG_WIDTH + 2, NUM_LEG_COLORS*COLOR_HEIGHT + 3);
+  
+    
+    int ii;
+    int cInd;
+    for (ii = 0; ii < NUM_LEG_COLORS; ii++)
+    {
+        cInd = int(map(ii, 0, NUM_LEG_COLORS, 0, NUM_COLORS)); 
+        fill(colorMap[cInd]);
+        noStroke();
+        rect(LEG_X, LEG_Y + (NUM_LEG_COLORS - ii)*COLOR_HEIGHT, LEG_WIDTH, COLOR_HEIGHT);
+    }
+   
+    //Draw legend label 
+    fill(FONT_COLOR);
+    textSize(10);
+    textAlign(CENTER, CENTER);
+    text("Color Map", LEG_X + W_BOX/2, LEG_Y - Y_SPACING/4);
   
   //This box fades away once serial port is opened, needs to be called last to be in front
   //drawCoverBox();
