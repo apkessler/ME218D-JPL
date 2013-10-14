@@ -11,7 +11,7 @@ final int WINDOW_H = 415;
 
 
 final int NUM_SENSORS = 8;
-final int SENSOR_MAX = 1024;
+final int SENSOR_MAX = 1023;
 final int X_BASE = 130;
 final int Y_BASE = 140;
 final int X_SPACING = 50;
@@ -24,7 +24,7 @@ final int X_BOX_BASE = X_BASE + 2*X_SPACING + W_BOX;
 final int Y_BOX_BASE = Y_BASE + Y_SPACING;
 
 //Lists...
-final String[] BAUD_LIST = {"2400", "4800", "9600", "19200", "38400","57600", "115200"};
+final String[] BAUD_LIST = {"115200", "57600", "38400", "19200", "9600", "4800", "2400"};
 final String[] DATA_BITS_LIST = {"6","7","8"};
 final String[] PARITY_LIST = {"none", "even", "odd"};
 final String[] STOP_LIST = {"1", "1.5", "2"};
@@ -76,15 +76,13 @@ void setup()
   String name_str;
   int x_coord;
   int y_coord;
-  //Set up the positions of the bar graphs.
   
+  //Set up the positions of the bar graphs.
   for (int ii = 0; ii < NUM_SENSORS; ii++)
   {
      name_str = "S" + ii; 
      x_coord = (ii%NUM_COLS)*(W_BOX + X_SPACING) + X_BOX_BASE;
-     //x_coord = X_BASE + ii*X_SPACING;
      y_coord = (ii/NUM_COLS)*(H_BOX + Y_SPACING) + Y_BOX_BASE;
-     //y_coord = Y_BASE + ii*Y_SPACING;
      sensorPlots[ii] = new ColorPlot(name_str, x_coord, y_coord, W_BOX, H_BOX, colorMap); 
   }
   
@@ -116,7 +114,6 @@ void setup()
   checkbox.setItemsPerRow(1);
   
   loadColorMap();
-  //cPlot = new ColorPlot("Plot 1", 200,400, colorMap);
  
 }
 
@@ -126,19 +123,18 @@ void setup()
 void draw() 
 {
   background(BG_COLOR);
-   
- 
+    
   drawSerialSettings(); 
  
- drawMouseCrosshair(); 
+ //drawMouseCrosshair(); 
  
  
- 
+ /*
  for (int i = 0; i < NUM_SENSORS; i++)
  {
    sensorPlots[i].setLevel(float(mouseX)/width);
  }
-  
+ */
   drawColorPlots();
   
 }
@@ -226,22 +222,6 @@ void drawMouseCrosshair()
   
 }
 
-void drawCoverBox()
-{
-   if (portOpen)
-   {
-     int now = millis();
-     float fade_length = 3000.0; //ms 
-     int opacity_now = max(255 - floor(min((now - fade_start)/fade_length*255.0, 255)), 0);
-     fill(BG_COLOR, opacity_now);
-   }
-   else
-   {
-     fill(BG_COLOR);
-   }
-     noStroke();
-     rect(X_BASE - 11, Y_BASE - 31, 802, 262); 
-}
 
 void drawSerialSettings()
 {
@@ -318,8 +298,6 @@ void drawColorPlots()
     textAlign(CENTER, CENTER);
     text("Color Map", LEG_X + W_BOX/2, LEG_Y - Y_SPACING/4);
   
-  //This box fades away once serial port is opened, needs to be called last to be in front
-  //drawCoverBox();
  
 }
 
