@@ -9,12 +9,12 @@
 #define	CONST_H
 
 #define numberOfSensorsPerRow 8
-#define numberOfRows 40
+#define numberOfRows 28
 #define numberOfSensorsPerBoard 32
-#define numberOfBoards 8
+#define numberOfBoards 7
 #define numberOfRowsPerBoard 4
 // totalNumberOfSensors = numberOfSensorsPerRow * numberOfRows
-#define totalNumberOfSensors 256
+#define totalNumberOfSensors 224
 
 // Space = 0x20, comma = 0x2c, semicolon = 0x3b
 #define SEPARATOR 0x20
