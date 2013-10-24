@@ -133,7 +133,7 @@ void transmitValue()
     }
     */
     byteNumber++;
-    if (byteNumber % 2 == 0)
+    if (byteNumber % 3 == 0)
     {
         byteNumber = 0;
         pinNumber++;
