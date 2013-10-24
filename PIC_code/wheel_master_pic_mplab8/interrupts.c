@@ -13,6 +13,7 @@
 
 #include "const.h"
 #include "readings.h"
+#include "AD.h"
 
 /******************************************************************************/
 /* Interrupt Routines                                                         */
@@ -51,6 +52,8 @@ void interrupt isr(void)
         // Begin transmit of data to serial port (USART)
         if (++count >= SEND_TIMEOUT_MS)
         {
+            count = 0;
+
             if ((PIR1 & _PIR1_TXIF_MASK) != 0)
             {
                 // Enable transmit interrupt
@@ -64,9 +67,10 @@ void interrupt isr(void)
     // If USART transmit buffer is empty
     else if ((PIR1 & _PIR1_TXIF_MASK) != 0)
     {
+        //PORTC |= 1;
         transmitValue();
+        //PORTC &= ~1;
     }
-
 }
 
 void transmitValue()
@@ -98,16 +102,50 @@ void transmitValue()
     }
 
     // Move to next value
-    if (++byteNumber % 3 == 0)
+    /*
+    {
+        static unsigned int i = 0;
+    byteNumber++;
+    if (byteNumber % 2 == 0)
     {
         byteNumber = 0;
-        if (++pinNumber % numberOfSensorsPerRow == 0)
+        pinNumber++;
+        if (i++ % 2 == 0) {PORTC |= 1;} else {PORTC &= ~1;i=0;}
+
+        pinNumber = numberOfSensorsPerRow - 1;
+        rowNumber = numberOfRowsPerBoard - 1;
+        boardNumber = numberOfBoards - 1;
+    }
+    if (pinNumber % numberOfSensorsPerRow == 0)
+    {
+        pinNumber = 0;
+        rowNumber++;
+    }
+    if (rowNumber % numberOfRowsPerBoard == 0)
+    {
+        rowNumber = 0;
+        boardNumber++;
+    }
+    if (boardNumber % numberOfBoards == 0)
+    {
+        boardNumber = 0;
+    }
+    }
+    */
+    byteNumber++;
+    if (byteNumber % 2 == 0)
+    {
+        byteNumber = 0;
+        pinNumber++;
+        if (pinNumber % numberOfSensorsPerRow == 0)
         {
             pinNumber = 0;
-            if (++rowNumber % numberOfRowsPerBoard == 0)
+            rowNumber++;
+            if (rowNumber % numberOfRowsPerBoard == 0)
             {
                 rowNumber = 0;
-                if (++boardNumber % numberOfBoards == 0)
+                boardNumber++;
+                if (boardNumber % numberOfBoards == 0)
                 {
                     boardNumber = 0;
                 }
@@ -115,8 +153,8 @@ void transmitValue()
         }
     }
 
-    // If all value have been sent
-    if (boardNumber == 0 && rowNumber == 0 && pinNumber == 0)
+    // If all values have been sent
+    if (boardNumber == 0 && rowNumber == 0 && pinNumber == 0 && byteNumber == 0)
     {
         // Disable transmit buffer empty interrupt
         PIE1 &= ~_PIE1_TXIE_MASK;

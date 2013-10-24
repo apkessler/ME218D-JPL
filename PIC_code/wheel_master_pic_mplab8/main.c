@@ -34,7 +34,7 @@ void main(void)
     /* Initialize I/O and Peripherals for application */
     InitApp();
 
-    // Make C0 an output
+    // Make C0 an output for debugging
     ANSELC &= ~1;
     TRISC &= ~1;
 
@@ -51,8 +51,14 @@ void main(void)
         
         // Select proper row and pin on board
         // Ports B0-B4
-        PORTB &= ~portMask;
-        PORTB |= portMask & (rowNumber << 3 + pinNumber);
+        //PORTB &= ~portMask
+        //PORTB &= (~portMask | (rowNumber << 3 | pinNumber));
+        //PORTB |= (portMask & (rowNumber << 3 | pinNumber));
+        if (pinNumber % 2 != 0) {PORTB |= 1;} else {PORTB &= ~1;}
+        if (pinNumber/2 % 2 != 0) {PORTB |= 2;} else {PORTB &= ~2;}
+        if (pinNumber/4 % 2 != 0) {PORTB |= 4;} else {PORTB &= ~4;}
+        if (rowNumber % 2 != 0) {PORTB |= 8;} else {PORTB &= ~8;}
+        if (rowNumber/2 % 2 != 0) {PORTB |= 16;} else {PORTB &= ~16;}
 
         for (boardNumber = 0; boardNumber < numberOfBoards; boardNumber++)
         {
@@ -71,7 +77,9 @@ void main(void)
                 rowNumber = 0;
             }
         }
-
+        
+        //if (i++ % 2 == 0) {PORTC |= 1;} else {PORTC &= ~1;i = 0;}
+        /*
         if (i++ % 2 == 0)
         {
             PORTC |= 1;
@@ -79,11 +87,9 @@ void main(void)
         else
         {
             PORTC &= ~1;
-        }
-        if (i % 0xFF == 0xFF)
-        {
             i = 0;
         }
+        */
     }
 
 }

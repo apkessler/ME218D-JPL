@@ -28,10 +28,11 @@ void AD_Init(void)
                1 << _ANSELA_ANSA1_POSN |
                1 << _ANSELA_ANSA0_POSN);
     ANSELB = 0x20; // 0010 0000
-    ANSELC = 0x7f; // 0111 1111
+    ANSELC = 0x7a; // 0111 1100
     
     // Set corresponding pins as inputs
     TRISA |= 0x2f; // 0010 1111
+    TRISB |= 0x20; // 0010 0000
     TRISC |= 0xbc; // 1011 1100
 
     // Set AD conversion clock
@@ -48,22 +49,28 @@ void AD_Init(void)
 
 unsigned short AD_Read(unsigned char channel)
 {
-    int i;
-    unsigned long returnValue;
+    unsigned int i;
+    unsigned int returnValue;
 
     // Select channel
     ADCON0 = ADReadArray[channel];
 
     // Wait acquisition time
-    for (i = 0; i < 36; i++);
+    for (i = 0; i < 1; i++); // ~8us
+    //for (i = 0; i < 100; i++); // ~300ms
 
     // Set GO bit
     ADCON0 |= _ADCON0_ADGO_MASK;
 
     // Wait until conversion finishes
-    while ((ADCON0 & _ADCON0_ADGO_MASK) != _ADCON0_ADGO_MASK);
+//PORTC |= 1;
+    while ((ADCON0 & _ADCON0_ADGO_MASK) != 0);
+//PORTC &= ~1;
 
-    returnValue = (unsigned short)((unsigned int)ADRESH << 2 + ADRESL >> 6);
+    //returnValue = ((unsigned int)ADRESH << 2 + ADRESL >> 6);
+    returnValue = (unsigned int)ADRESH;
+    returnValue = returnValue * 4;
+    returnValue = returnValue + ADRESL / 0x3f;
 
     return (unsigned short)returnValue;
 }

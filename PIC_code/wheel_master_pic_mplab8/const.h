@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   const.h
  * Author: David
  *
@@ -8,13 +8,25 @@
 #ifndef CONST_H
 #define	CONST_H
 
-#define numberOfSensorsPerRow 8
-#define numberOfRows 28
-#define numberOfSensorsPerBoard 32
-#define numberOfBoards 7
-#define numberOfRowsPerBoard 4
-// totalNumberOfSensors = numberOfSensorsPerRow * numberOfRows
-#define totalNumberOfSensors 224
+#define TEST
+
+#ifdef TEST
+    #define numberOfSensorsPerRow 1
+    #define numberOfBoards 2
+    #define numberOfRowsPerBoard 1
+    #define numberOfRowsTotal 2
+    #define numberOfSensorsPerBoard 1
+    // totalNumberOfSensors = numberOfSensorsPerRow * numberOfRows
+    #define totalNumberOfSensors 2
+#else
+    #define numberOfSensorsPerRow 8
+    #define numberOfBoards 7
+    #define numberOfRowsPerBoard 4
+    #define numberOfRowsTotal 28
+    #define numberOfSensorsPerBoard 32
+    // totalNumberOfSensors = numberOfSensorsPerRow * numberOfRows
+    #define totalNumberOfSensors 224
+#endif
 
 // Space = 0x20, comma = 0x2c, semicolon = 0x3b
 #define SEPARATOR 0x20

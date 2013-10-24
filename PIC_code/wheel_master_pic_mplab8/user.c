@@ -31,7 +31,7 @@ void InitApp(void)
     ANSELC = 0;
 
     // Set B0-B4 as outputs to control mux(s)
-    TRISB = 0x1f; // 0001 1111
+    TRISB = 0xe0; // 1110 0000
 
     // Enable only specific ports as analog
     AD_Init();
@@ -47,14 +47,14 @@ void InitApp(void)
     RCSTA |= _RCSTA_SPEN_MASK;
 
     /* Enable interrupts */
-    PIE1 |= _PIE1_ADIE_MASK | _PIE1_TXIE_MASK | _PIE1_TMR2IE_MASK;
+    PIE1 |= _PIE1_TXIE_MASK | _PIE1_TMR2IE_MASK;
     INTCON |= _INTCON_PEIE_MASK;
     INTCON |= _INTCON_GIE_MASK;
 
     // Start timer 2
     // Prescale = 16
     T2CON |= _T2CON_T2CKPS1_MASK;
-    T2CON &= _T2CON_T2CKPS0_MASK;
+    T2CON &= ~_T2CON_T2CKPS0_MASK;
     PR2 = 250;
     T2CON |= _T2CON_TMR2ON_MASK;
 }
