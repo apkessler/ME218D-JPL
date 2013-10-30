@@ -216,10 +216,13 @@ void serialEvent(Serial _port)
   try
   {  
     String line = _port.readString();
-    int[] nums = int(split(line, ' '));
-    System.out.printf("[%d,%d,%d,%d,%d,%d,%d,%d]\n", nums[0], nums[1],nums[2],nums[3],nums[4],nums[5],nums[6],nums[7]);
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {sensorPlots[i].setLevel(1.0 - float(nums[i])/float(SENSOR_MAX));}
+
+      
+    byte col = (byte) line.charAt(0);
+    
+    System.out.printf("Got column %d (0x%X).\n",col,col);
+    for (int ii = 0; ii < NUM_ROWS; ii++)
+    {sensorPlots[28*ii+col].setLevel(1.0 - float(line.charAt(ii))/float(SENSOR_MAX));}
   }
   catch (Exception e){
     println("Unknown serial error."); 
