@@ -194,7 +194,8 @@ public void connect(float theValue)
 
    
    thePort = new Serial(this, portName, baudVal);
-   thePort.bufferUntil('\n'); //trigger a SerialEvent every time a new line gets fed in
+   //thePort.bufferUntil('\n'); //trigger a SerialEvent every time a new line gets fed in
+   thePort.buffer(18);
    portOpen = true;
    fade_start = millis();
   }
@@ -216,26 +217,48 @@ void serialEvent(Serial _port)
   try
   {  
     String line = _port.readString();
+    if (line.length() < NUM_ROWS*2+1)
+    {
+      System.out.printf("Line 0x%02X too short: %d\n",(byte)line.charAt(0), (int)line.length());
+      _port.bufferUntil('\n');
+      return;
+    }
+    if (line.charAt(17) != '\n')
+    {
+      _port.bufferUntil('\n');
+      return;
+    }
+    _port.buffer(18);
 
-    println(line);  
+    //println(line);  
     int col = ((byte) line.charAt(0));
     
     System.out.printf("Got column %d (0x%X).\n",col,col);
     for (int ii = 0; ii < NUM_ROWS; ii++)
-    { char MSB = line.charAt(2*ii +1);
+    { 
+      int MSB = line.charAt(2*ii +1) % 256;
+      int LSB = line.charAt(2*ii +2) % 256;
+      int thisRead = MSB*256 + LSB;
+      System.out.printf("%d: (0x%02X,0x%02X) = %d,%d = %d\n",ii,(byte)MSB,(byte)LSB,MSB,LSB,thisRead);
+      if (thisRead <= 1023 && thisRead >= 0)
+      {
+         sensorPlots[28*ii+col].setLevel(1.0 - float(thisRead)/float(SENSOR_MAX));
+      }
+      /*char MSB = line.charAt(2*ii +1);
       char LSB = line.charAt(2*ii +2);
       int thisRead = ((int) MSB)*256 + ((byte) LSB);
       //thisRead = ceil(thisRead,256);
-      System.out.printf("%d: (0x%X,0x%X) = %d\n",ii,(byte)MSB,(byte)LSB,thisRead);
+      //System.out.printf("%d: (0x%X,0x%X) = %d\n",ii,(byte)MSB,(byte)LSB,thisRead);
      if (thisRead <= 1023 && thisRead >= 0)
      {
         sensorPlots[28*ii+col].setLevel(1.0 - float(thisRead)/float(SENSOR_MAX));
      }
+     */
     }
     
   }
   catch (Exception e){
-    println("Unknown serial error."); 
+    println(e); 
   }
   
 } 
