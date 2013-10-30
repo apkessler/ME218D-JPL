@@ -6,20 +6,20 @@ PFont gillsf;
 PFont monof;
 
 /**************************************CONSTANTS*****************************************/
-final int WINDOW_W = 850;
-final int WINDOW_H = 415;
+final int WINDOW_W = 1200;
+final int WINDOW_H = 500;
 
 
-final int NUM_SENSORS = 8;
+final int NUM_SENSORS = 224;
 final int SENSOR_MAX = 1023;
-final int X_BASE = 130;
+final int X_BASE = 20;
 final int Y_BASE = 140;
-final int X_SPACING = 50;
-final int Y_SPACING = 50;
-final int NUM_COLS = 4;
+final int X_SPACING = 0;
+final int Y_SPACING = 0;
+final int NUM_COLS = 28;
 final int NUM_ROWS = ceil(float(NUM_SENSORS)/float(NUM_COLS));
-final int W_BOX = 50;
-final int H_BOX = 50;
+final int W_BOX = 40;
+final int H_BOX = 40;
 final int X_BOX_BASE = X_BASE + 2*X_SPACING + W_BOX;
 final int Y_BOX_BASE = Y_BASE + Y_SPACING;
 
@@ -59,6 +59,10 @@ DropdownList ddl_ports, ddl_baud, ddl_dbits, ddl_parity, ddl_stop;
 Button but1;
 CheckBox checkbox;
 
+CheckBox plotOptions;
+
+boolean mouseDebug = false;
+boolean showOverlay = false;
 /****************************************FUNCTIONS***************************************/
 /*
  * The setup() functions get everything ready to go - executed
@@ -84,6 +88,8 @@ void setup()
      x_coord = (ii%NUM_COLS)*(W_BOX + X_SPACING) + X_BOX_BASE;
      y_coord = (ii/NUM_COLS)*(H_BOX + Y_SPACING) + Y_BOX_BASE;
      sensorPlots[ii] = new ColorPlot(name_str, x_coord, y_coord, W_BOX, H_BOX, colorMap); 
+     sensorPlots[ii].setShowLabel(false);
+     sensorPlots[ii].setShowValue(false);
   }
   
   //ControlP5 setup
@@ -113,6 +119,13 @@ void setup()
   checkbox.addItem("XON", 0);
   checkbox.setItemsPerRow(1);
   
+  plotOptions = controlP5.addCheckBox("Plot Options", X_BASE, Y_BASE - 30);
+  plotOptions.addItem("Overlay",0);
+  plotOptions.addItem("Mouse", 0);
+  plotOptions.setItemsPerRow(3);
+  plotOptions.setSpacingColumn(50);
+
+  
   loadColorMap();
  
 }
@@ -129,12 +142,13 @@ void draw()
  //drawMouseCrosshair(); 
  
  
- /*
- for (int i = 0; i < NUM_SENSORS; i++)
+ if (mouseDebug)
  {
-   sensorPlots[i].setLevel(float(mouseX)/width);
+   for (int i = 0; i < NUM_SENSORS; i++)
+   {
+     sensorPlots[i].setLevel(float(mouseX)/width);
+   }
  }
- */
   drawColorPlots();
   
 }
@@ -255,6 +269,7 @@ void drawSerialSettings()
 
 void drawColorPlots()
 {
+
   //Draw the framing box
   fill(BOX_BG_COLOR);
   stroke(255);
@@ -264,13 +279,13 @@ void drawColorPlots()
   
   //Draw all the bar graphs...
   for (int i = 0; i < NUM_SENSORS; i++)
-  {sensorPlots[i].draw();}
+  {sensorPlots[i].draw(showOverlay);}
   
   //Draw the graph text...
   fill(FONT_COLOR);
   textSize(20);
   textAlign(CENTER, CENTER);
-  text("Force Sensors",X_BASE + frame_w/2,Y_BASE + Y_SPACING/3);
+  text("Force Sensors",X_BASE + frame_w/2,Y_BASE - 15);
   
 
   
@@ -301,7 +316,7 @@ void drawColorPlots()
     fill(FONT_COLOR);
     textSize(10);
     textAlign(CENTER, CENTER);
-    text("Color Map", LEG_X + W_BOX/2, LEG_Y - Y_SPACING/4);
+    text("Color Map", LEG_X + W_BOX/2, LEG_Y - 8);
   
  
 }
@@ -322,6 +337,11 @@ void keyPressed()
     }
     exit();
     break;
+   case 'm':
+     mouseDebug = !mouseDebug; 
+     plotOptions.toggle(1);
+     break;
+   
    default:
     println("No action defined for '" + c + "'.");
   }
@@ -366,4 +386,18 @@ void loadColorMap()
       String[] rgb = split(lines[i],' ');
       colorMap[i] = color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
     } 
+}
+
+
+
+void controlEvent(ControlEvent theEvent) {
+  if (theEvent.isFrom(plotOptions)) 
+  {
+    showOverlay = plotOptions.getState(0);
+   
+    
+    mouseDebug = plotOptions.getState(1);
+
+  }
+   
 }

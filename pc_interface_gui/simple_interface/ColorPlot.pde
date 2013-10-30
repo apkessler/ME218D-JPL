@@ -14,6 +14,8 @@ class ColorPlot {
    float level;
    
    boolean showLabel;
+   boolean showValue;
+  
    
    color colorMap[];
    
@@ -27,11 +29,13 @@ class ColorPlot {
       label = _label;
       level = 0.0;
       showLabel = true;
+      showValue = true;
+
       
       colorMap = _map;
    }
   
-  void draw()
+  void draw(boolean showOverlay)
   {   
    rectMode(CORNER);
    int cInd = floor(min(level*colorMap.length, 1023));
@@ -46,8 +50,23 @@ class ColorPlot {
      textSize(10);
      text(label,xPos+wBox/2,yPos+hBox+10);
    }
+   
+   if (showValue)
+   {
    textSize(9);
    text(" " + floor(100*level) + "%",xPos + wBox, yPos + floor((1-level)*hBox));
+   }
+   
+   if (showOverlay || ((mouseX < (xPos + wBox)) && (mouseX > xPos) && (mouseY < (yPos + hBox)) && (mouseY > yPos)))
+   {
+     textSize(9);
+     textAlign(CENTER,TOP);
+     text(floor(100*level) + "%",xPos + wBox/2, yPos + 2*hBox/3); 
+     
+     textAlign(CENTER, BOTTOM);
+     text(label,xPos + wBox/2, yPos + hBox/3);
+   }
+   
   }
   
   void setLevel(float _level)
@@ -60,12 +79,19 @@ class ColorPlot {
    showLabel = _showLabel; 
   }
   
-  
+  void setShowValue(boolean _showValue)
+  {
+   showValue = _showValue; 
+  }
   void setTextColor(color c)
   {
    textColor = c; 
   }
   
+  void setShowOverlay(boolean _showOverlay)
+  {
+   showOverlay = _showOverlay; 
+  }
   
   
 }
