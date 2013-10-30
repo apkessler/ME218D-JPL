@@ -217,12 +217,22 @@ void serialEvent(Serial _port)
   {  
     String line = _port.readString();
 
-      
-    byte col = (byte) line.charAt(0);
+    println(line);  
+    int col = ((byte) line.charAt(0));
     
     System.out.printf("Got column %d (0x%X).\n",col,col);
     for (int ii = 0; ii < NUM_ROWS; ii++)
-    {sensorPlots[28*ii+col].setLevel(1.0 - float(line.charAt(ii))/float(SENSOR_MAX));}
+    { char MSB = line.charAt(2*ii +1);
+      char LSB = line.charAt(2*ii +2);
+      int thisRead = ((int) MSB)*256 + ((byte) LSB);
+      //thisRead = ceil(thisRead,256);
+      System.out.printf("%d: (0x%X,0x%X) = %d\n",ii,(byte)MSB,(byte)LSB,thisRead);
+     if (thisRead <= 1023 && thisRead >= 0)
+     {
+        sensorPlots[28*ii+col].setLevel(1.0 - float(thisRead)/float(SENSOR_MAX));
+     }
+    }
+    
   }
   catch (Exception e){
     println("Unknown serial error."); 
