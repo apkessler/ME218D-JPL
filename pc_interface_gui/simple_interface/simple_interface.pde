@@ -44,6 +44,11 @@ final color FONT_COLOR = color(255);
 //Heat map...
 final int NUM_COLORS = 1024;
 color[] colorMap = new color[NUM_COLORS];
+
+
+//Default serial settings
+final String DEFAULT_PORT = "COM26";
+final int DEFAULT_BAUD = 115200;
 /***************************************GLOBALS******************************************/  
 
 ColorPlot[] sensorPlots = new ColorPlot[NUM_SENSORS]; //sensor plots
@@ -56,7 +61,7 @@ int fade_start;
 //ControlP5 vars...
 ControlP5 controlP5;
 DropdownList ddl_ports, ddl_baud, ddl_dbits, ddl_parity, ddl_stop;
-Button but1;
+Button but1, but2;
 CheckBox checkbox;
 
 CheckBox plotOptions;
@@ -115,8 +120,12 @@ void setup()
   ddl_stop = controlP5.addDropdownList("Stop Bits", X_SERIAL+480, Y_SERIAL, 70, 300);
   customizeDropdownList(ddl_stop, STOP_LIST);
   
-  but1 = controlP5.addButton("connect", 0, X_SERIAL+610, Y_SERIAL - BUTTON_HEIGHT + 5, 60, BUTTON_HEIGHT);
+  but1 = controlP5.addButton("connect", 0, X_SERIAL+610, Y_SERIAL - BUTTON_HEIGHT + 5, 80, BUTTON_HEIGHT);
   but1.setColorBackground(color(255,0,0));
+  
+  but2 = controlP5.addButton("con_default", 0, X_SERIAL+700, Y_SERIAL - BUTTON_HEIGHT + 5, 80, BUTTON_HEIGHT);
+  but2.setColorBackground(color(255,0,0));
+  but2.setCaptionLabel("Default");
   
   checkbox = controlP5.addCheckBox("Flow control", X_SERIAL + 560, Y_SERIAL - 27);
   checkbox.addItem("CTR",0);
@@ -228,6 +237,7 @@ public void connect(float theValue)
    
    thePort = new Serial(this, portName, baudVal);
    //thePort.bufferUntil('\n'); //trigger a SerialEvent every time a new line gets fed in
+   but1.setCaptionLabel("STOP");
    thePort.buffer(18);
    portOpen = true;
    fade_start = millis();
@@ -241,6 +251,33 @@ public void connect(float theValue)
    
   
 }
+
+
+public void con_default(float theValue)
+{
+   if (!portOpen)
+  {
+    
+    String portName = DEFAULT_PORT;
+    int baudVal = DEFAULT_BAUD;
+    println("Port: " + portName);
+    println("Baud: " + baudVal);
+
+   thePort = new Serial(this, portName, baudVal);
+  
+   thePort.buffer(18);
+   portOpen = true;
+   fade_start = millis();
+  }
+  else
+  {
+    portOpen = false;
+    println("Closing serial port...");
+    thePort.stop(); 
+  }
+  
+}
+
 
 /*
  * Function called whenever a newline is available on the serial port.
@@ -305,7 +342,7 @@ void drawSerialSettings()
    //Draw framing box
   fill(BOX_BG_COLOR);
   stroke(255);
-  rect(X_SERIAL, Y_SERIAL - 50, 680, 70); 
+  rect(X_SERIAL, Y_SERIAL - 50, 790, 70); 
   
   textSize(12);
   textAlign(LEFT, CENTER);
@@ -316,11 +353,17 @@ void drawSerialSettings()
   {
     text("Connected!", X_SERIAL + 200, Y_SERIAL - 40);
     but1.setColorBackground(CONNECTED_COLOR);
+    but2.setColorBackground(CONNECTED_COLOR);
+    but1.setCaptionLabel("STOP"); 
+    but2.setCaptionLabel("STOP"); 
   }
   else
   {
    text("Not connected.", X_SERIAL + 200, Y_SERIAL - 40); 
    but1.setColorBackground(DISCONNECTED_COLOR);
+   but2.setColorBackground(DISCONNECTED_COLOR);
+   but1.setCaptionLabel("Custom Connect"); 
+   but2.setCaptionLabel("Default Connect"); 
   } 
 }
 
@@ -398,6 +441,14 @@ void keyPressed()
    case 'm':
      mouseDebug = !mouseDebug; 
      plotOptions.toggle(1);
+     break;  
+  case 'c':
+     mouseCrosshair = !mouseCrosshair; 
+     plotOptions.toggle(2);
+     break;
+  case 'o':
+     showOverlay = !showOverlay; 
+     plotOptions.toggle(0);
      break;
    
    default:
