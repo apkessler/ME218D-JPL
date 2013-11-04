@@ -63,6 +63,11 @@ CheckBox plotOptions;
 
 boolean mouseDebug = false;
 boolean showOverlay = false;
+boolean mouseCrosshair = false;
+
+PShape nasa_logo;
+PShape jpl_logo;
+float aniScale = 1.0;
 /****************************************FUNCTIONS***************************************/
 /*
  * The setup() functions get everything ready to go - executed
@@ -121,13 +126,18 @@ void setup()
   
   plotOptions = controlP5.addCheckBox("Plot Options", X_BASE, Y_BASE - 30);
   plotOptions.addItem("Overlay",0);
-  plotOptions.addItem("Mouse", 0);
+  plotOptions.addItem("Test Color", 0);
+  plotOptions.addItem("Crosshair", 0);
   plotOptions.setItemsPerRow(3);
   plotOptions.setSpacingColumn(50);
 
   
   loadColorMap();
  
+  nasa_logo = loadShape("nasa.svg");
+  jpl_logo = loadShape("jpl.svg");
+ 
+  jpl_logo.scale(0.7);
 }
 
 /*
@@ -139,7 +149,7 @@ void draw()
     
   drawSerialSettings(); 
  
- //drawMouseCrosshair(); 
+
  
  
  if (mouseDebug)
@@ -151,8 +161,31 @@ void draw()
  }
   drawColorPlots();
   
+  drawLogos();
+  
+  if (mouseCrosshair)
+  {
+     drawMouseCrosshair(); 
+  }
 }
 
+void drawLogos()
+{
+  
+  shapeMode(CENTER);
+  shape(nasa_logo, 1200, 130);
+  shape(jpl_logo, 1000, 80);
+  
+  if (aniScale > 0.4)
+  {
+      nasa_logo.scale(0.96);
+      aniScale *=0.96;
+  }
+ 
+
+  
+  
+}
 
 void customizeDropdownList(DropdownList ddl, String[] optList) 
 {
@@ -418,11 +451,9 @@ void loadColorMap()
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isFrom(plotOptions)) 
   {
-    showOverlay = plotOptions.getState(0);
-   
-    
+    showOverlay = plotOptions.getState(0); 
     mouseDebug = plotOptions.getState(1);
-
+    mouseCrosshair = plotOptions.getState(2);
   }
    
 }
