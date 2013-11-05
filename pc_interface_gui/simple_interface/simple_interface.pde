@@ -278,29 +278,33 @@ void serialEvent(Serial _port)
     int col = ((byte) line.charAt(0));
 
     System.out.printf("Got column %d (0x%X).\n", col, col);
-    String now = hour() + ":" + minute()+ ":"+ second();
+    String now = String.format("%02d:%02d:%02d",hour(),minute(),second());
+    if (logging)
+    {
+       logger.print(now + ", " + String.format("%02d",col)); 
+    }
+    
     for (int ii = 0; ii < heatMap.getNumRows(); ii++)
     { 
       int MSB = line.charAt(2*ii +1) % 256;
       int LSB = line.charAt(2*ii +2) % 256;
       int thisRead = MSB*256 + LSB;
       System.out.printf("%d: (0x%02X,0x%02X) = %d,%d = %d\n", ii, (byte)MSB, (byte)LSB, MSB, LSB, thisRead);
-      if (logging)
-      {
-          logger.print(now + "," + col); 
-      }
+      
       
       if (thisRead <= 1023 && thisRead >= 0)
       {
         heatMap.setLevel(28*ii+col, 1.0 - float(thisRead)/float(SENSOR_MAX) );
         if (logging)
         {
-          logger.print("," + thisRead); 
+          logger.print(", " + String.format("%4d",thisRead)); 
         }
-      }
-      
-      logger.print("\n");
-    }
+      }   
+     }
+        if (logging)
+      {
+      logger.println("");
+      } 
   }
   catch (Exception e) {
     println(e);
@@ -368,7 +372,7 @@ void keyPressed()
       println("Closing serial port...");
       thePort.stop();
     }
-    if (logger != null)
+    if (logging)
     {
       logger.flush();
       logger.close();
