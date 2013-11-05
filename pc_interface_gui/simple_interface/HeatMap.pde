@@ -115,8 +115,9 @@ class HeatMap
   {
    for (int i = 0; i < NUM_SENSORS; i++)
    {
-     sensorPlots[i].setLevel(floor(float(mouseX)/width*1023));
+     sensorPlots[i].setLevel(max(0,min(1023,floor(sin(float(mouseX+i)/width*PI)*1023))));
    } 
+  
   }
   
   void setLevel(int i, int lvl)
@@ -128,6 +129,17 @@ class HeatMap
   int getNumRows()
   {
    return NUM_ROWS; 
+  }
+  
+  int getColumnNorm(int col)
+  {
+    int runningSum = 0;
+    for (int i = 0; i < NUM_ROWS; i++)
+   {
+     runningSum+= abs(sensorPlots[28*i+col].getLevel());
+   } 
+    println(runningSum); 
+   return (floor(runningSum/float(NUM_ROWS)));
   }
 }
 

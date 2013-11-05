@@ -71,6 +71,10 @@ class ColorPlot {
    
   }
   
+  int getLevel()
+  {
+    return level; 
+  }
   void setLevel(int _level)
   {
    level = _level; 

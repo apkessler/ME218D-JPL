@@ -141,6 +141,7 @@ void setup()
   jpl_logo.scale(0.7);
   
   normPlot = new LinePlot("Norm", 60, 500, 1120, 100);
+  normPlot.setBgColor(BOX_BG_COLOR);
 }
 
 /*
@@ -154,7 +155,14 @@ void draw()
 
 
   if (mouseDebug)
-  { heatMap.trackMouse(); }
+  { 
+    heatMap.trackMouse();
+   for (int i=0; i<NUM_COLS; i++)
+   {
+     normPlot.setY(i, floor(heatMap.getColumnNorm(i)));
+     System.out.printf("||c_%d|| = %d\n", i, floor(heatMap.getColumnNorm(i)));
+   } 
+ }
   
   heatMap.draw();
 
@@ -289,6 +297,7 @@ void serialEvent(Serial _port)
        logger.print(now + ", " + String.format("%02d",col)); 
     }
     
+    int runningSum = 0;
     for (int ii = 0; ii < heatMap.getNumRows(); ii++)
     { 
       int MSB = line.charAt(2*ii +1) % 256;
@@ -300,16 +309,21 @@ void serialEvent(Serial _port)
       if (thisRead <= 1023 && thisRead >= 0)
       {
         heatMap.setLevel(28*ii+col, 1023 - thisRead);
+        runningSum += (1023 - thisRead);
         if (logging)
         {
           logger.print(", " + String.format("%4d",1023 - thisRead)); 
         }
       }   
      }
-        if (logging)
+     if (logging)
       {
       logger.println("");
       } 
+      
+     normPlot.setY(col,floor(runningSum/float(heatMap.getNumRows())));
+      
+      
   }
   catch (Exception e) {
     println(e);
