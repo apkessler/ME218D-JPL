@@ -69,6 +69,7 @@ float aniScale = 1.0;
 
 HeatMap heatMap;
 PrintWriter logger;
+boolean logging = false;
 /****************************************FUNCTIONS***************************************/
 /*
  * The setup() functions get everything ready to go - executed
@@ -115,9 +116,9 @@ void setup()
   but2.setColorBackground(color(255, 0, 0));
   but2.setCaptionLabel("Default");
   
-  log_but = controlP5.addButton("log_button", 0, X_BASE+500, Y_BASE - BUTTON_HEIGHT - 5, 80, BUTTON_HEIGHT);
-  log_but.setColorBackground(color(255, 0, 0));
-  log_but.setCaptionLabel("Begin Log");
+  log_but = controlP5.addButton("log_button", 0, X_BASE+200, Y_BASE - BUTTON_HEIGHT - 10, 80, BUTTON_HEIGHT);
+  log_but.setColorBackground(color(18,196,138));
+  log_but.setCaptionLabel("Start Logging");
 
   checkbox = controlP5.addCheckBox("Flow control", X_SERIAL + 560, Y_SERIAL - 27);
   checkbox.addItem("CTR", 0);
@@ -277,6 +278,7 @@ void serialEvent(Serial _port)
     int col = ((byte) line.charAt(0));
 
     System.out.printf("Got column %d (0x%X).\n", col, col);
+    String now = hour() + "_" + minute()+ "_"+ second();
     for (int ii = 0; ii < heatMap.getNumRows(); ii++)
     { 
       int MSB = line.charAt(2*ii +1) % 256;
@@ -286,6 +288,10 @@ void serialEvent(Serial _port)
       if (thisRead <= 1023 && thisRead >= 0)
       {
         heatMap.setLevel(28*ii+col, 1.0 - float(thisRead)/float(SENSOR_MAX) );
+        if (logging)
+        {
+          logger.println(now + "," + col + "," + ii + "," + thisRead); 
+        }
       }
     }
   }
@@ -393,9 +399,21 @@ void controlEvent(ControlEvent theEvent) {
 }
 
 
-void log_but(float theValue)
+void log_button(float theValue)
 {
-  println("Logging...");
-  logger = createWriter("log.txt");
-  logger.println("Hi");
+  if (!logging)
+ {
+    logger = createWriter("log.txt");
+    log_but.setColorBackground(color(255, 0, 0));
+    log_but.setCaptionLabel("Stop Logging");
+    logging = true;
+ }
+ else
+ {
+    logger.flush();
+    logger.close();
+    log_but.setColorBackground(color(18,196,138));
+    log_but.setCaptionLabel("Start Logging");    
+    logging = false; 
+ }
 }
