@@ -294,10 +294,10 @@ void serialEvent(Serial _port)
       
       if (thisRead <= 1023 && thisRead >= 0)
       {
-        heatMap.setLevel(28*ii+col, 1.0 - float(thisRead)/float(SENSOR_MAX) );
+        heatMap.setLevel(28*ii+col, 1023 - thisRead);
         if (logging)
         {
-          logger.print(", " + String.format("%4d",thisRead)); 
+          logger.print(", " + String.format("%4d",1023 - thisRead)); 
         }
       }   
      }

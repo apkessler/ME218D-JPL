@@ -11,7 +11,9 @@ class ColorPlot {
    color textColor = color(255);
   
    String label;
-   float level;
+
+   int reading_max;
+   int level;
    
    boolean showLabel;
    boolean showValue;
@@ -27,7 +29,7 @@ class ColorPlot {
       wBox = _w;
       hBox = _h;
       label = _label;
-      level = 0.0;
+      level = 0;
       showLabel = true;
       showValue = true;
 
@@ -38,8 +40,8 @@ class ColorPlot {
   void draw(boolean showOverlay)
   {   
    rectMode(CORNER);
-   int cInd = floor(min(level*colorMap.length, 1023));
-   fill(colorMap[cInd]);
+ 
+   fill(colorMap[level]);
    stroke(strokeColor);
    rect(xPos,yPos,wBox,hBox); 
 
@@ -61,7 +63,7 @@ class ColorPlot {
    {
      textSize(9);
      textAlign(CENTER,TOP);
-     text(floor(100*level) + "%",xPos + wBox/2, yPos + 2*hBox/3); 
+     text(level,xPos + wBox/2, yPos + 2*hBox/3); 
      
      textAlign(CENTER, BOTTOM);
      text(label,xPos + wBox/2, yPos + hBox/3);
@@ -69,7 +71,7 @@ class ColorPlot {
    
   }
   
-  void setLevel(float _level)
+  void setLevel(int _level)
   {
    level = _level; 
   }

@@ -115,11 +115,11 @@ class HeatMap
   {
    for (int i = 0; i < NUM_SENSORS; i++)
    {
-     sensorPlots[i].setLevel(float(mouseX)/width);
+     sensorPlots[i].setLevel(floor(float(mouseX)/width*1023));
    } 
   }
   
-  void setLevel(int i, float lvl)
+  void setLevel(int i, int lvl)
   {
    sensorPlots[i].setLevel(lvl);  
   }
