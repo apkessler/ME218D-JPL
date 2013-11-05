@@ -374,6 +374,7 @@ void keyPressed()
     }
     if (logging)
     {
+      println("Closing log file...");
       logger.flush();
       logger.close();
     }
