@@ -7,7 +7,7 @@ PFont monof;
 
 /**************************************CONSTANTS*****************************************/
 final int WINDOW_W = 1200;
-final int WINDOW_H = 500;
+final int WINDOW_H = 700;
 
 
 //Lists...
@@ -70,6 +70,8 @@ float aniScale = 1.0;
 HeatMap heatMap;
 PrintWriter logger;
 boolean logging = false;
+
+LinePlot normPlot;
 /****************************************FUNCTIONS***************************************/
 /*
  * The setup() functions get everything ready to go - executed
@@ -138,6 +140,7 @@ void setup()
   jpl_logo = loadShape("jpl.svg");
   jpl_logo.scale(0.7);
   
+  normPlot = new LinePlot("Norm", 60, 500, 1120, 100);
 }
 
 /*
@@ -156,6 +159,8 @@ void draw()
   heatMap.draw();
 
   drawLogos();
+  
+  normPlot.draw();
 
   if (mouseCrosshair)
   { drawMouseCrosshair();}
