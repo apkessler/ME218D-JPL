@@ -1,6 +1,7 @@
 class LinePlot 
 {
   color line_color = color(255);
+  color grid_color = color(255);
   color dot_fill_color = color(255);
   color dot_outline_color = color(0);
   color bg_color = color(255);
@@ -23,6 +24,8 @@ class LinePlot
   
   int[] xPixels = new int[NUM_VALS];
   int[] yPixels = new int[NUM_VALS];
+  
+  boolean showGrid = false;
   
   LinePlot(String _label, int _x, int _y, int _w, int _h)
   {
@@ -51,6 +54,15 @@ class LinePlot
    rectMode(CORNER);
    rect(plot_x, plot_y, plot_width, plot_height); 
   
+  if (showGrid)
+  {
+    for (int i = 1; i <NUM_VALS; i++)
+    {
+      stroke(grid_color);
+      line(40*i + plot_x, plot_y, 40*i + plot_x, plot_y + plot_height);
+    }
+  }
+    
    for (int i = 0; i <NUM_VALS; i++)
    {
      
@@ -73,9 +85,12 @@ class LinePlot
      stroke(dot_outline_color);
      ellipseMode(RADIUS);
      ellipse(xPixels[i], yPixels[i], DOT_RADIUS, DOT_RADIUS); 
+     textAlign(CENTER,BOTTOM);
+     text(yData[i],xPixels[i],yPixels[i] - DOT_RADIUS);
   }
   
   fill(255); 
+  textAlign(CENTER,CENTER);
   text(x_axis_label, plot_x + plot_width/2, plot_y + plot_height+10);
   text(y_axis_label, plot_x - 15, plot_y + plot_height/2);
     

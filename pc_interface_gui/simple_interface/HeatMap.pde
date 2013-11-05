@@ -138,7 +138,6 @@ class HeatMap
    {
      runningSum+= abs(sensorPlots[28*i+col].getLevel());
    } 
-    println(runningSum); 
    return (floor(runningSum/float(NUM_ROWS)));
   }
 }

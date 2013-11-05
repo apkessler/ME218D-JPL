@@ -140,7 +140,7 @@ void setup()
   jpl_logo = loadShape("jpl.svg");
   jpl_logo.scale(0.7);
   
-  normPlot = new LinePlot("Norm", 60, 500, 1120, 100);
+  normPlot = new LinePlot("Norm", 60, 500, 1120, 150);
   normPlot.setBgColor(BOX_BG_COLOR);
 }
 
@@ -160,7 +160,6 @@ void draw()
    for (int i=0; i<NUM_COLS; i++)
    {
      normPlot.setY(i, floor(heatMap.getColumnNorm(i)));
-     System.out.printf("||c_%d|| = %d\n", i, floor(heatMap.getColumnNorm(i)));
    } 
  }
   
