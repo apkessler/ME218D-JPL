@@ -46,7 +46,6 @@ final String DEFAULT_PORT = "COM26";
 final int DEFAULT_BAUD = 115200;
 /***************************************GLOBALS******************************************/
 
-
 //Serial Port variables
 Serial thePort;
 boolean portOpen = false;
@@ -55,7 +54,7 @@ int fade_start;
 //ControlP5 vars...
 ControlP5 controlP5;
 DropdownList ddl_ports, ddl_baud, ddl_dbits, ddl_parity, ddl_stop;
-Button but1, but2;
+Button but1, but2, log_but;
 CheckBox checkbox;
 
 CheckBox plotOptions;
@@ -69,6 +68,7 @@ PShape jpl_logo;
 float aniScale = 1.0;
 
 HeatMap heatMap;
+PrintWriter logger;
 /****************************************FUNCTIONS***************************************/
 /*
  * The setup() functions get everything ready to go - executed
@@ -114,6 +114,10 @@ void setup()
   but2 = controlP5.addButton("con_default", 0, X_SERIAL+700, Y_SERIAL - BUTTON_HEIGHT + 5, 80, BUTTON_HEIGHT);
   but2.setColorBackground(color(255, 0, 0));
   but2.setCaptionLabel("Default");
+  
+  log_but = controlP5.addButton("log_button", 0, X_BASE+500, Y_BASE - BUTTON_HEIGHT - 5, 80, BUTTON_HEIGHT);
+  log_but.setColorBackground(color(255, 0, 0));
+  log_but.setCaptionLabel("Begin Log");
 
   checkbox = controlP5.addCheckBox("Flow control", X_SERIAL + 560, Y_SERIAL - 27);
   checkbox.addItem("CTR", 0);
@@ -131,8 +135,8 @@ void setup()
 
   nasa_logo = loadShape("nasa.svg");
   jpl_logo = loadShape("jpl.svg");
-
   jpl_logo.scale(0.7);
+  
 }
 
 /*
@@ -351,6 +355,11 @@ void keyPressed()
       println("Closing serial port...");
       thePort.stop();
     }
+    if (logger != null)
+    {
+      logger.flush();
+      logger.close();
+    }
     exit();
     break;
   case 'm':
@@ -383,3 +392,10 @@ void controlEvent(ControlEvent theEvent) {
   }
 }
 
+
+void log_but(float theValue)
+{
+  println("Logging...");
+  logger = createWriter("log.txt");
+  logger.println("Hi");
+}
