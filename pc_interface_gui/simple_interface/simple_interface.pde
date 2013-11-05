@@ -278,21 +278,28 @@ void serialEvent(Serial _port)
     int col = ((byte) line.charAt(0));
 
     System.out.printf("Got column %d (0x%X).\n", col, col);
-    String now = hour() + "_" + minute()+ "_"+ second();
+    String now = hour() + ":" + minute()+ ":"+ second();
     for (int ii = 0; ii < heatMap.getNumRows(); ii++)
     { 
       int MSB = line.charAt(2*ii +1) % 256;
       int LSB = line.charAt(2*ii +2) % 256;
       int thisRead = MSB*256 + LSB;
       System.out.printf("%d: (0x%02X,0x%02X) = %d,%d = %d\n", ii, (byte)MSB, (byte)LSB, MSB, LSB, thisRead);
+      if (logging)
+      {
+          logger.print(now + "," + col); 
+      }
+      
       if (thisRead <= 1023 && thisRead >= 0)
       {
         heatMap.setLevel(28*ii+col, 1.0 - float(thisRead)/float(SENSOR_MAX) );
         if (logging)
         {
-          logger.println(now + "," + col + "," + ii + "," + thisRead); 
+          logger.print("," + thisRead); 
         }
       }
+      
+      logger.print("\n");
     }
   }
   catch (Exception e) {
@@ -403,7 +410,7 @@ void log_button(float theValue)
 {
   if (!logging)
  {
-    logger = createWriter("log.txt");
+    logger = createWriter("log_" + hour() + "_" + minute() + "_" + second() +".txt");
     log_but.setColorBackground(color(255, 0, 0));
     log_but.setCaptionLabel("Stop Logging");
     logging = true;
