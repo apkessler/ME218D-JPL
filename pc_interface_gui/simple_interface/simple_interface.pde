@@ -138,7 +138,8 @@ void setup()
 
   nasa_logo = loadShape("nasa.svg");
   jpl_logo = loadShape("jpl.svg");
-  jpl_logo.scale(0.7);
+  jpl_logo.scale(0.8);
+  nasa_logo.scale(0.4);
   
   normPlot = new LinePlot("Norm", 60, 500, 1120, 150);
   normPlot.setBgColor(BOX_BG_COLOR);
@@ -178,13 +179,8 @@ void drawLogos()
 
   shapeMode(CENTER);
   shape(nasa_logo, 1200, 130);
-  shape(jpl_logo, 1000, 80);
+  shape(jpl_logo, 980, 70);
 
-  if (aniScale > 0.4)
-  {
-    nasa_logo.scale(0.96);
-    aniScale *=0.96;
-  }
 }
 
 void customizeDropdownList(DropdownList ddl, String[] optList) 
