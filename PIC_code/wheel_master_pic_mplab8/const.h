@@ -8,16 +8,16 @@
 #ifndef CONST_H
 #define	CONST_H
 
-#define TEST
+//#define TEST
 
 #ifdef TEST
     #define numberOfSensorsPerRow 1
-    #define numberOfBoards 2
-    #define numberOfRowsPerBoard 1
-    #define numberOfRowsTotal 2
-    #define numberOfSensorsPerBoard 1
+    #define numberOfBoards 1
+    #define numberOfRowsPerBoard 4
+    #define numberOfRowsTotal 4
+    #define numberOfSensorsPerBoard 4
     // totalNumberOfSensors = numberOfSensorsPerRow * numberOfRows
-    #define totalNumberOfSensors 2
+    #define totalNumberOfSensors 4
 #else
     #define numberOfSensorsPerRow 8
     #define numberOfBoards 7
@@ -29,10 +29,11 @@
 #endif
 
 // Space = 0x20, comma = 0x2c, semicolon = 0x3b
-#define SEPARATOR 0x20
+#define SEPARATOR ' '
 
 // Number of ms between lines sent to PC
-#define SEND_TIMEOUT_MS 1000
+#define SEND_TIMEOUT_MS 35
+//#define SEND_TIMEOUT_MS 100
 
 #endif	/* CONST_H */
 

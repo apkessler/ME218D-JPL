@@ -14,6 +14,7 @@ extern "C" {
 
     void storeValue(unsigned char boardNumber, unsigned char rowNumber, unsigned char pinNumber, unsigned short value);
     unsigned short getValue(unsigned char boardNumber, unsigned char rowNumber, unsigned char pinNumber);
+    unsigned int getForce(unsigned char boardNumber, unsigned char rowNumber, unsigned char pinNumber);
 
 
 #ifdef	__cplusplus

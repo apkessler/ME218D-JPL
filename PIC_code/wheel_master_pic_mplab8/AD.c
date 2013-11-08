@@ -56,8 +56,9 @@ unsigned short AD_Read(unsigned char channel)
     ADCON0 = ADReadArray[channel];
 
     // Wait acquisition time
-    for (i = 0; i < 1; i++); // ~8us
-    //for (i = 0; i < 100; i++); // ~300ms
+    //for (i = 0; i < 1; i++); // ~8us
+    for (i = 0; i < 100; i++);
+    //for (i = 0; i < 100; i++); // ~300us
 
     // Set GO bit
     ADCON0 |= _ADCON0_ADGO_MASK;
