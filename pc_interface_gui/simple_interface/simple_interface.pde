@@ -42,7 +42,7 @@ final int NUM_COLS = 28;
 final int SENSOR_MAX = 1023;
 
 //Default serial settings
-final String DEFAULT_PORT = "COM26";
+final String DEFAULT_PORT = "COM27";
 final int DEFAULT_BAUD = 115200;
 /***************************************GLOBALS******************************************/
 
