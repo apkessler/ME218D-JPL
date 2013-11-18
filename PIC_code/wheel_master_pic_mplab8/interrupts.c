@@ -75,63 +75,66 @@ void interrupt isr(void)
 
 void transmitValue()
 {
+    static unsigned char messageHeaderNumber = 0;
     static unsigned char byteNumber = 0;
     static unsigned char boardNumber = 0;
     static unsigned char rowNumber = 0;
     static unsigned char pinNumber = 0;
+    
+    // Slow down/wait some time to slow transmission to be able to print to screen fast enough
+    //unsigned long i;
+    //for (i = 0; i < 200; i++);
 
     // Clear interrupt flag
     // Cleared by hardware when buffer is full
 
     // Send next byte
+    switch (messageHeaderNumber)
+    {
+        case 0:
+            TXREG = boardNumber * numberOfRowsPerBoard + rowNumber;
+            messageHeaderNumber++;
+            return;
+        case 1:
+            // Don't send a separator after row number
+            break;
+            
+            TXREG = SEPARATOR;
+            messageHeaderNumber++;
+            return;
+        default:
+        case 2:
+            break;
+    }
+    
     switch (byteNumber)
     {
         case 0:
             // Send upper half of value
             TXREG = (unsigned char)(getValue(boardNumber, rowNumber, pinNumber) >> 8);
+            //TXREG = (unsigned char)(getForce(boardNumber, rowNumber, pinNumber) >> 8);
             break;
         case 1:
             // Send lower half of value
             TXREG = (unsigned char)getValue(boardNumber, rowNumber, pinNumber);
+            //TXREG = (unsigned char)getForce(boardNumber, rowNumber, pinNumber);
             break;
         default:
         case 2:
             // Send delimiter between sensor values
-            TXREG = SEPARATOR;
+            if (pinNumber != numberOfSensorsPerRow - 1)
+            {
+                // Don't send separator between values
+                //TXREG = SEPARATOR;
+            }
+            else
+            {
+                TXREG = '\n';
+            }
             break;
     }
 
     // Move to next value
-    /*
-    {
-        static unsigned int i = 0;
-    byteNumber++;
-    if (byteNumber % 2 == 0)
-    {
-        byteNumber = 0;
-        pinNumber++;
-        if (i++ % 2 == 0) {PORTC |= 1;} else {PORTC &= ~1;i=0;}
-
-        pinNumber = numberOfSensorsPerRow - 1;
-        rowNumber = numberOfRowsPerBoard - 1;
-        boardNumber = numberOfBoards - 1;
-    }
-    if (pinNumber % numberOfSensorsPerRow == 0)
-    {
-        pinNumber = 0;
-        rowNumber++;
-    }
-    if (rowNumber % numberOfRowsPerBoard == 0)
-    {
-        rowNumber = 0;
-        boardNumber++;
-    }
-    if (boardNumber % numberOfBoards == 0)
-    {
-        boardNumber = 0;
-    }
-    }
-    */
     byteNumber++;
     if (byteNumber % 3 == 0)
     {
@@ -153,11 +156,14 @@ void transmitValue()
         }
     }
 
-    // If all values have been sent
-    if (boardNumber == 0 && rowNumber == 0 && pinNumber == 0 && byteNumber == 0)
+    // If all values for the row have been sent
+    if (pinNumber == 0 && byteNumber == 0)
     {
         // Disable transmit buffer empty interrupt
         PIE1 &= ~_PIE1_TXIE_MASK;
+        
+        // Reset flag to send message header
+        messageHeaderNumber = 0;
     }
 }
 

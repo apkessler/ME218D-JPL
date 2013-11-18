@@ -23,6 +23,14 @@
 
 /* i.e. uint8_t <variable_name>; */
 
+static unsigned char controlLines[32] =
+{
+     7, 5, 3, 1, 8,10,12,14,
+     6, 4, 2, 0, 9,11,13,15,
+    22,20,18,16,25,27,29,31,
+    23,21,19,17,24,26,28,30
+};
+
 /******************************************************************************/
 /* Main Program                                                               */
 /******************************************************************************/
@@ -48,17 +56,27 @@ void main(void)
         static unsigned char i = 0;
 
         static const unsigned char portMask = 0x1f;
+        static unsigned char outputValue = 0;
         
         // Select proper row and pin on board
         // Ports B0-B4
         //PORTB &= ~portMask
         //PORTB &= (~portMask | (rowNumber << 3 | pinNumber));
         //PORTB |= (portMask & (rowNumber << 3 | pinNumber));
-        if (pinNumber % 2 != 0) {PORTB |= 1;} else {PORTB &= ~1;}
-        if (pinNumber/2 % 2 != 0) {PORTB |= 2;} else {PORTB &= ~2;}
-        if (pinNumber/4 % 2 != 0) {PORTB |= 4;} else {PORTB &= ~4;}
-        if (rowNumber % 2 != 0) {PORTB |= 8;} else {PORTB &= ~8;}
-        if (rowNumber/2 % 2 != 0) {PORTB |= 16;} else {PORTB &= ~16;}
+
+        //if (pinNumber % 2 != 0) {PORTB |= 1;} else {PORTB &= ~1;}
+        //if (pinNumber/2 % 2 != 0) {PORTB |= 2;} else {PORTB &= ~2;}
+        //if (pinNumber/4 % 2 != 0) {PORTB |= 4;} else {PORTB &= ~4;}
+        //if (rowNumber % 2 != 0) {PORTB |= 8;} else {PORTB &= ~8;}
+        //if (rowNumber/2 % 2 != 0) {PORTB |= 16;} else {PORTB &= ~16;}
+
+        // For actual PCB, due to sequential headers instead of alternating rows
+        outputValue = controlLines[8*rowNumber + pinNumber];
+        if (outputValue % 2 != 0)    {PORTB |= 1;}  else {PORTB &= ~1;}
+        if (outputValue/2 % 2 != 0)  {PORTB |= 2;}  else {PORTB &= ~2;}
+        if (outputValue/4 % 2 != 0)  {PORTB |= 4;}  else {PORTB &= ~4;}
+        if (outputValue/8 % 2 != 0)  {PORTB |= 8;}  else {PORTB &= ~8;}
+        if (outputValue/16 % 2 != 0) {PORTB |= 16;} else {PORTB &= ~16;}
 
         for (boardNumber = 0; boardNumber < numberOfBoards; boardNumber++)
         {
@@ -66,7 +84,7 @@ void main(void)
             value = AD_Read(boardNumber);
 
             // Store value to array
-            storeValue(boardNumber, rowNumber, pinNumber, value);
+            storeValue(boardNumber, rowNumber, pinNumber, 1023 - value);
         }
 
         if (++pinNumber % numberOfSensorsPerRow == 0)
