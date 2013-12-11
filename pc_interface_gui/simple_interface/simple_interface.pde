@@ -1,31 +1,13 @@
 import processing.serial.*;
 import controlP5.*;
 
-//Fonts...
-PFont gillsf;
-PFont monof;
 
 /**************************************CONSTANTS*****************************************/
 final int WINDOW_W = 1200;
 final int WINDOW_H = 700;
 
-
-//Lists...
-final String[] BAUD_LIST = {
-  "115200", "57600", "38400", "19200", "9600", "4800", "2400"
-};
-final String[] DATA_BITS_LIST = {
-  "6", "7", "8"
-};
-final String[] PARITY_LIST = {
-  "none", "even", "odd"
-};
-final String[] STOP_LIST = {
-  "1", "1.5", "2"
-};
-
 final int Y_SERIAL = 70;
-final int X_SERIAL = 60;
+final int X_SERIAL = 20;
 final int BUTTON_HEIGHT = 30;
 
 //Colors...
@@ -49,11 +31,10 @@ final int DEFAULT_BAUD = 115200;
 //Serial Port variables
 Serial thePort;
 boolean portOpen = false;
-int fade_start;
 
 //ControlP5 vars...
 ControlP5 controlP5;
-DropdownList ddl_ports, ddl_baud, ddl_dbits, ddl_parity, ddl_stop;
+DropdownList ddl_ports; 
 Button but1, but2, log_but;
 CheckBox checkbox;
 
@@ -72,6 +53,7 @@ PrintWriter logger;
 boolean logging = false;
 
 LinePlot normPlot;
+
 /****************************************FUNCTIONS***************************************/
 /*
  * The setup() functions get everything ready to go - executed
@@ -99,34 +81,12 @@ void setup()
   ddl_ports = controlP5.addDropdownList("Serial port", X_SERIAL + 20, Y_SERIAL, 200, 300);
   customizeDropdownList(ddl_ports, Serial.list());
 
-  ddl_baud = controlP5.addDropdownList("Baud rate", X_SERIAL +240, Y_SERIAL, 70, 300);
-  customizeDropdownList(ddl_baud, BAUD_LIST);
-
-  ddl_dbits = controlP5.addDropdownList("Data bits", X_SERIAL+ 320, Y_SERIAL, 70, 300);
-  customizeDropdownList(ddl_dbits, DATA_BITS_LIST);
-
-  ddl_parity = controlP5.addDropdownList("Parity", X_SERIAL+ 400, Y_SERIAL, 70, 300);
-  customizeDropdownList(ddl_parity, PARITY_LIST);
-
-  ddl_stop = controlP5.addDropdownList("Stop Bits", X_SERIAL+480, Y_SERIAL, 70, 300);
-  customizeDropdownList(ddl_stop, STOP_LIST);
-
-  but1 = controlP5.addButton("connect", 0, X_SERIAL+610, Y_SERIAL - BUTTON_HEIGHT + 5, 80, BUTTON_HEIGHT);
+  but1 = controlP5.addButton("connect", 0, X_SERIAL+250, Y_SERIAL - BUTTON_HEIGHT + 5, 80, BUTTON_HEIGHT);
   but1.setColorBackground(color(255, 0, 0));
-
-  but2 = controlP5.addButton("con_default", 0, X_SERIAL+700, Y_SERIAL - BUTTON_HEIGHT + 5, 80, BUTTON_HEIGHT);
-  but2.setColorBackground(color(255, 0, 0));
-  but2.setCaptionLabel("Default");
   
   log_but = controlP5.addButton("log_button", 0, X_BASE+200, Y_BASE - BUTTON_HEIGHT - 10, 80, BUTTON_HEIGHT);
   log_but.setColorBackground(color(18,196,138));
   log_but.setCaptionLabel("Start Logging");
-
-  checkbox = controlP5.addCheckBox("Flow control", X_SERIAL + 560, Y_SERIAL - 27);
-  checkbox.addItem("CTR", 0);
-  checkbox.addItem("DTR", 0);
-  checkbox.addItem("XON", 0);
-  checkbox.setItemsPerRow(1);
 
   plotOptions = controlP5.addCheckBox("Plot Options", X_BASE, Y_BASE - 30);
   plotOptions.addItem("Overlay", 0);
@@ -135,7 +95,6 @@ void setup()
   plotOptions.setItemsPerRow(3);
   plotOptions.setSpacingColumn(50);
 
-
   nasa_logo = loadShape("nasa.svg");
   jpl_logo = loadShape("jpl.svg");
   jpl_logo.scale(0.8);
@@ -143,6 +102,7 @@ void setup()
   
   normPlot = new LinePlot("Norm", 60, 500, 1120, 150);
   normPlot.setBgColor(BOX_BG_COLOR);
+  
 }
 
 /*
@@ -154,7 +114,14 @@ void draw()
 
   drawSerialSettings(); 
 
-
+  textSize(35);
+  textAlign(CENTER,CENTER);
+  text("Tactile Wheel Interface", WINDOW_W/2, 50);
+  
+  textSize(12);
+  textAlign(LEFT, CENTER);
+  fill(FONT_COLOR);
+  
   if (mouseDebug)
   { 
     heatMap.trackMouse();
@@ -176,19 +143,18 @@ void draw()
 
 void drawLogos()
 {
-
   shapeMode(CENTER);
   shape(nasa_logo, 1200, 130);
   shape(jpl_logo, 980, 70);
-
 }
 
+/*
+ * Customize settings for dropdown menus.
+ */
 void customizeDropdownList(DropdownList ddl, String[] optList) 
 {
-  //ddl.setBackgroundColor(color(190));
   ddl.setItemHeight(20);
   ddl.setBarHeight(20);
-  //ddl.captionLabel().set("pulldown");
   ddl.captionLabel().style().marginTop = 3;
   ddl.captionLabel().style().marginLeft = 3;
   ddl.valueLabel().style().marginTop = 3;
@@ -200,6 +166,9 @@ void customizeDropdownList(DropdownList ddl, String[] optList)
 
 }
 
+/*
+ * Return String of selected dropdown menu.
+ */
 String ddlGetSelected(DropdownList ddl)
 {
   return ddl.getItem(int(ddl.getValue())).getName();
@@ -216,7 +185,7 @@ public void connect(float theValue)
   {
 
     String portName = ddlGetSelected(ddl_ports);
-    int baudVal = Integer.parseInt(ddlGetSelected(ddl_baud));
+    int baudVal = DEFAULT_BAUD; //Integer.parseInt(ddlGetSelected(ddl_baud));
     println("Port: " + portName);
     println("Baud: " + baudVal);
 
@@ -226,32 +195,7 @@ public void connect(float theValue)
     but1.setCaptionLabel("STOP");
     thePort.buffer(18);
     portOpen = true;
-    fade_start = millis();
-  }
-  else
-  {
-    portOpen = false;
-    println("Closing serial port...");
-    thePort.stop();
-  }
-}
 
-
-public void con_default(float theValue)
-{
-  if (!portOpen)
-  {
-
-    String portName = DEFAULT_PORT;
-    int baudVal = DEFAULT_BAUD;
-    println("Port: " + portName);
-    println("Baud: " + baudVal);
-
-    thePort = new Serial(this, portName, baudVal);
-
-    thePort.buffer(18);
-    portOpen = true;
-    fade_start = millis();
   }
   else
   {
@@ -330,7 +274,6 @@ void serialEvent(Serial _port)
  */
 void drawMouseCrosshair()
 {
-
   fill(FONT_COLOR);
   textSize(10);
   text("(" + mouseX +"," + mouseY +")", mouseX+2, mouseY); 
@@ -338,41 +281,38 @@ void drawMouseCrosshair()
   line(mouseX- 5, mouseY, mouseX+5, mouseY);
 }
 
-
+/*
+ * Draw the Serial Settings box.
+ */
 void drawSerialSettings()
 {
   //Draw framing box
   fill(BOX_BG_COLOR);
   stroke(255);
-  rect(X_SERIAL, Y_SERIAL - 50, 790, 70); 
+  rect(X_SERIAL, Y_SERIAL - 50, 350, 70); 
 
-  textSize(12);
-  textAlign(LEFT, CENTER);
+  textSize(14);
+  textAlign(CENTER, CENTER);
   fill(FONT_COLOR);
-  text("Serial Settings", X_SERIAL + 5, Y_SERIAL - 40);
-
+  text("Serial Settings", X_SERIAL + 350/2  , Y_SERIAL - 40);
+  textSize(12);
+  
   if (portOpen)
   {
-    text("Connected!", X_SERIAL + 200, Y_SERIAL - 40);
     but1.setColorBackground(CONNECTED_COLOR);
-    but2.setColorBackground(CONNECTED_COLOR);
     but1.setCaptionLabel("STOP"); 
-    but2.setCaptionLabel("STOP");
   }
   else
   {
-    text("Not connected.", X_SERIAL + 200, Y_SERIAL - 40); 
     but1.setColorBackground(DISCONNECTED_COLOR);
-    but2.setColorBackground(DISCONNECTED_COLOR);
-    but1.setCaptionLabel("Custom Connect"); 
-    but2.setCaptionLabel("Default Connect");
+    but1.setCaptionLabel("Connect"); 
   }
 }
 
 
-
-
-
+/*
+ * React to keyboard events. 
+ */
 void keyPressed() 
 {
   int keyIndex = -1;
@@ -414,7 +354,9 @@ void keyPressed()
 
  
 
-
+/*
+ * React to the checkbox events.
+ */
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isFrom(plotOptions)) 
   {
@@ -424,7 +366,9 @@ void controlEvent(ControlEvent theEvent) {
   }
 }
 
-
+/*
+ * React to a push of the log button.
+ */ 
 void log_button(float theValue)
 {
   if (!logging)

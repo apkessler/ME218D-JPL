@@ -18,10 +18,8 @@ class ColorPlot {
    boolean showLabel;
    boolean showValue;
   
-   
    color colorMap[];
-   
-   
+    
    ColorPlot(String _label,int _x, int _y, int _w, int _h, color[] _map)
    {
       xPos = _x;
@@ -32,8 +30,6 @@ class ColorPlot {
       level = 0;
       showLabel = true;
       showValue = true;
-
-      
       colorMap = _map;
    }
   
