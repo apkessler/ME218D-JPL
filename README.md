@@ -12,18 +12,12 @@ The advancement of wheeled mobility systems for planetary exploration faces two 
 
 ## Repository Structure
 ###PC Interface GUI
-Files in this folder are the PC end of the pressure sensor interface. The microcontroller will send data over a data channel (for now, UART), and the PC interface will interpret and plot this data in real time. The GUI is written in the Processing language, available for free at [http://processing.org](http://processing.org/ "Processing"). To run the GUI from source, you will also need the ControlP5 library, available [here](http://www.sojamo.de/libraries/controlP5/).
+Files in this folder are the PC end of the pressure sensor interface. The microcontroller sends data over a data channel (for now, UART), and the PC interface will interpret and plot this data in real time. The GUI is written in the Processing language, available for free at [http://processing.org](http://processing.org/ "Processing"). To run the GUI from source, you will also need the ControlP5 library, available [here](http://www.sojamo.de/libraries/controlP5/).
+
+You will also need the FTDI drivers, found [here](http://www.ftdichip.com/Drivers/VCP.htm) in order to communicate with the UART device as a virtual COM port.
+
+Precompiled executables for Windows, Mac OS X, and Linux (32-bit) are available in individual subdirectories.
 
 ###Microcontroller Code
 
-Code for the microcontroller on the wheel goes in here.
-
-###Mechanical Design
-
-Files related to mechanical design go in here. 
-
-###Documentation
-Generic documentation for the project as a whole goes in here. Documentation specific to the microcontroller code or mechanical design should be put in the respective folder.
-
-###Other
-Feel free to make a new folder for files that don't fit into any of the above categories.
+This folder contains the source code for the program running on the PIC that is at the center of the wheel.
