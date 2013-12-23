@@ -14,5 +14,7 @@
 
 # Executables
 *.exe
+!simple_interface.exe
 *.out
 *.app
+!simple_interface.app
